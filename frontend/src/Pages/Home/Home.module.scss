@@ -1,0 +1,37 @@
+.title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: grey;
+}
+
+.title:hover {
+  // border-bottom: 1px solid black;
+}
+
+.control {
+  font-size: 20px;
+  font-weight: bolder;
+  margin-bottom: 10px;
+  // border-bottom: 1px solid black;
+}
+
+.wrapper {
+  background-color: red;
+
+}
+
+.searchbar {
+  width: 242px;
+  position: absolute;
+  z-index: 10;
+  right: 5vw;
+  top: 27px;
+}
+.nav {
+  margin-bottom: 10px;
+}
+
+.nav:hover {
+  cursor: pointer;
+}
