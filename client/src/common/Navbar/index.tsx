@@ -16,7 +16,7 @@ const Navbar = () => {
           <li>
             <a
               href="/"
-              className="block py-2 px-3 text-main-green-dark rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-main-green md:p-0 font-semibold"
+              className="block py-2 px-3 text-main-green rounded  md:hover:bg-transparent md:hover:text-main-green-dark md:p-0 font-semibold"
               aria-current="page"
             >
               Laman Utama
@@ -25,7 +25,7 @@ const Navbar = () => {
           <li>
             <a
               href="/webgis"
-              className="block py-2 px-3 text-main-green-dark rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-main-green md:p-0 font-semibold"
+              className="block py-2 px-3 text-main-green rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-main-green-dark md:p-0 font-semibold"
             >
               WebGIS
             </a>
@@ -36,7 +36,7 @@ const Navbar = () => {
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse ">
             <img src={logo} className="h-8" alt="Biro Pemotda Logo" />
-            <span className="text-main-green-dark self-center text-2xl font-bold whitespace-nowrap hidden sm:block">
+            <span className="text-main-green self-center text-2xl font-bold whitespace-nowrap hidden sm:block">
               SISBATAS
             </span>
           </a>
@@ -44,7 +44,7 @@ const Navbar = () => {
             <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
               <button
                 type="button"
-                className="text-white bg-main-green-dark hover:bg-main-green focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center "
+                className="text-white bg-main-green hover:bg-main-green-dark focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center "
               >
                 Lapor Pak!
               </button>
@@ -82,7 +82,7 @@ const Navbar = () => {
                 <li>
                   <a
                     href="/"
-                    className="block py-2 px-3 text-main-green-dark rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-main-green md:p-0 font-semibold"
+                    className="block py-2 px-3 text-main-green rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-main-green-dark md:p-0 font-semibold"
                     aria-current="page"
                   >
                     Laman Utama
@@ -91,7 +91,7 @@ const Navbar = () => {
                 <li>
                   <a
                     href="/webgis"
-                    className="block py-2 px-3 text-main-green-dark rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-main-green md:p-0 font-semibold"
+                    className="block py-2 px-3 text-main-green rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-main-green-dark md:p-0 font-semibold"
                   >
                     WebGIS
                   </a>
