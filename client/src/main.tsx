@@ -1,17 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
+import App from './home/App.tsx';
+import WebGIS from './webgis/App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
+import Navbar from './common/Navbar/index.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: (
+      <>
+        <Navbar />
+        <App />
+      </>
+    ),
   },
   {
-    path: '/test',
-    element: <p>test</p>,
+    path: '/webgis',
+    element: (
+      <>
+        <Navbar />
+        <WebGIS />
+      </>
+    ),
   },
 ]);
 

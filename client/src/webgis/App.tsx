@@ -1,6 +1,6 @@
 import viteLogo from '/vite.svg';
 
-function App() {
+function WebGIS() {
   return (
     <>
       <div>
@@ -12,4 +12,4 @@ function App() {
   );
 }
 
-export default App;
+export default WebGIS;

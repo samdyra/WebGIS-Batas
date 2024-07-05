@@ -2,20 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 ::-webkit-scrollbar {
   display: none;
 }
 
-.bg-primary {
-  background-color: rgb(255, 255, 255);
-}
-
-.w-47 {
-  width: 47%;
-}
-
-.white-calendar-icon::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-}
