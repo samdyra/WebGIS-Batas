@@ -4,7 +4,7 @@ import App from './home/App.tsx';
 import WebGIS from './webgis/App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
-import Navbar from './common/components/Navbar/index.tsx';
+import Navbar from './shared/components/Navbar/index.tsx';
 
 const router = createBrowserRouter([
   {
