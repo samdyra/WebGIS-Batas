@@ -3,7 +3,6 @@ import { useState } from 'react';
 import MapComponent from './components/Map';
 import SettingBar from './components/Settingbar';
 import Detailbar from './components/Detailbar';
-
 import layer from '/layer.svg';
 
 const menuItems = [

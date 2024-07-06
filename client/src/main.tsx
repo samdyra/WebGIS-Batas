@@ -19,10 +19,10 @@ const router = createBrowserRouter([
   {
     path: '/webgis',
     element: (
-      <>
+      <div className="h-screen overflow-hidden">
         <Navbar className="border-b-2" />
         <WebGIS />
-      </>
+      </div>
     ),
   },
 ]);

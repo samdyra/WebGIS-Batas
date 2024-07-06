@@ -1,34 +1,28 @@
-import {
-  AttributionControl,
-  FullscreenControl,
-  GeolocateControl,
-  Map,
-  MapProvider,
-  NavigationControl,
-} from 'react-map-gl';
+import { useRef, useState, useEffect } from 'react';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
-const MapComponent = () => {
-  return (
-    <>
-      <MapProvider>
-        <Map
-          id="mainMap"
-          mapboxAccessToken="pk.eyJ1IjoiZHdpcHV0cmFzYW0iLCJhIjoiY2xlMDRxZDU2MTU3dTNxb2Fkc3Q0NWFpciJ9.M-nfqnbgrf7QQdXHAXn07Q"
-          style={{
-            width: '100vw',
-            height: '92vh',
-          }}
-          mapStyle="mapbox://styles/mapbox/streets-v11"
-          attributionControl={false}
-        >
-          <AttributionControl customAttribution="Made with love by Sam" style={{ color: 'black' }} />
-          <NavigationControl position="bottom-right" />
-          <FullscreenControl />
-          <GeolocateControl />
-        </Map>
-      </MapProvider>
-    </>
-  );
+const Map = () => {
+  const mapContainer = useRef(null);
+  const [viewState] = useState({
+    longitude: 0,
+    latitude: 0,
+    zoom: 1,
+  });
+
+  useEffect(() => {
+    const { longitude, latitude, zoom } = viewState;
+    const map = new maplibregl.Map({
+      container: mapContainer?.current ?? '',
+      style: 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      center: [longitude, latitude],
+      zoom: zoom,
+    });
+
+    return () => map.remove();
+  }, [viewState]);
+
+  return <div ref={mapContainer} style={{ width: '100%', height: '100vh' }} />;
 };
 
-export default MapComponent;
+export default Map;
