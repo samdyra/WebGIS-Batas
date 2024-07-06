@@ -14,7 +14,8 @@ const Map = () => {
     const { longitude, latitude, zoom } = viewState;
     const map = new maplibregl.Map({
       container: mapContainer?.current ?? '',
-      style: 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      style: 'https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+      // style: 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
       center: [longitude, latitude],
       zoom: zoom,
     });
