@@ -5,9 +5,9 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 const Map = () => {
   const mapContainer = useRef(null);
   const [viewState] = useState({
-    longitude: 0,
-    latitude: 0,
-    zoom: 1,
+    longitude: 107.6098,
+    latitude: -6.9175,
+    zoom: 10,
   });
 
   useEffect(() => {
@@ -18,6 +18,26 @@ const Map = () => {
       // style: 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
       center: [longitude, latitude],
       zoom: zoom,
+    });
+
+    map.on('load', () => {
+      map.addLayer({
+        id: 'shp_batas_wgs',
+        source: {
+          type: 'vector',
+          tiles: ['http://localhost:3000/v1/mvt/shp_batas_wgs/{z}/{x}/{y}'],
+          maxzoom: 14,
+          minzoom: 5,
+        },
+        'source-layer': 'shp_batas_wgs',
+        type: 'line',
+        minzoom: 5,
+        paint: {
+          'line-color': '#ed6498',
+          'line-width': 5,
+          'line-opacity': 0.8,
+        },
+      });
     });
 
     return () => map.remove();
