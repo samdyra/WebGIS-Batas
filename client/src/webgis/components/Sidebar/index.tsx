@@ -2,10 +2,9 @@
 import React, { memo, useState } from 'react';
 import s from './sidebar.module.scss';
 
-import openlogo from '../../../public/openlogo.svg';
+import openlogo from '../../../../public/openlogo.svg';
 
 type MenuItemsType = {
-  name: string;
   icon: string;
   label: string;
 }[];
@@ -46,14 +45,14 @@ const SideBar = (props: IProps) => {
 
   return (
     <>
-      <div className={s.wrapper} style={{ width: isOpen2 ? '100px' : '200px' }}>
+      <div className={`${s.wrapper} border-t-2`} style={{ width: isOpen2 ? '100px' : '200px' }}>
         {props.menuItems?.map((item, index) => {
           const isSelected = index === menuIndex;
 
           if (isOpen2) {
             if (isSelected) {
               return (
-                <div className="mx-auto mb-5" key={item.name}>
+                <div className="mx-auto mb-5" key={item.label}>
                   <div
                     className={`${s.logostyleactive} text-bold mx-auto flex w-fit flex-col items-center justify-center border-main-yellow p-[4px]`}
                   >
@@ -64,16 +63,15 @@ const SideBar = (props: IProps) => {
                       onClick={() => handleOpenIndex(index, isSelected)}
                     />
                   </div>
-                  <p className="text-center text-sm font-semibold text-white">{item.name}</p>
                 </div>
               );
             }
 
             return (
-              <div className="mx-auto mb-5" key={item.name}>
+              <div className="mx-auto mb-5" key={item.label}>
                 <div
                   className={`${s.logostyle} text-bold mx-auto flex w-fit flex-col items-center justify-center p-[4px]`}
-                  key={item.name}
+                  key={item.label}
                 >
                   <img
                     src={item.icon}
@@ -82,7 +80,6 @@ const SideBar = (props: IProps) => {
                     onClick={() => handleOpenIndex(index, isSelected)}
                   />
                 </div>
-                <p className="text-center text-sm font-semibold text-white">{item.name}</p>
               </div>
             );
           }
@@ -91,11 +88,9 @@ const SideBar = (props: IProps) => {
             return (
               <button
                 className="text-bold flex  w-full items-center justify-center bg-blue-500 py-2 font-semibold text-white"
-                key={item.name}
+                key={item.label}
                 onClick={() => handleOpenIndex(index, isSelected)}
               >
-                {item.name}
-                <br></br>
                 {item.label}
               </button>
             );
@@ -104,11 +99,9 @@ const SideBar = (props: IProps) => {
           return (
             <button
               className="flex w-full items-center justify-center py-2 font-semibold text-white hover:bg-blue-500"
-              key={item.name}
+              key={item.label}
               onClick={() => handleOpenIndex(index, isSelected)}
             >
-              {item.name}
-              <br></br>
               {item.label}
             </button>
           );
@@ -135,9 +128,9 @@ const SideBar = (props: IProps) => {
           />
         </button>
       </div>
-      <div className={`${s.wrapper2 ?? ''}`} style={wrapper2Style}>
+      <div className={`border-r-2 border-t-2 ${s.wrapper2 ?? ''}`} style={wrapper2Style}>
         {isOpen && (
-          <h1 className="mb-2 pl-4 text-2xl font-bold text-white ">{`${props?.menuItems?.[menuIndex]?.name}:
+          <h1 className="mb-2 pl-4 text-2xl font-bold text-main-green-dark ">{`${props?.menuItems?.[menuIndex]?.label}:
         ${props?.menuItems?.[menuIndex]?.label}`}</h1>
         )}
 

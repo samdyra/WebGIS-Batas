@@ -1,0 +1,13 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 5rem);
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 4.5rem;
+  left: 0.5rem;
+  z-index: 2;
+  color: black;
+  transition: all 0.5s;
+  border-radius: 10px;
+}

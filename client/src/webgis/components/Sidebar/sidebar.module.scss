@@ -1,7 +1,7 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 4.3rem);
+  height: calc(100vh - 4.26rem);
   background-color: #2aab48;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
   position: absolute;
@@ -11,18 +11,20 @@
   z-index: 2;
   color: black;
   transition: all 0.5s;
+
 }
 
 .wrapper2 {
   display: flex;
   padding-block: 10px;
   flex-direction: column;
-  height: calc(100vh - 4.3rem);
-  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+  height: calc(100vh - 4.26rem);
+  box-shadow: 0 0.5rem 0 rgba(0, 0, 0, 0.1);
+  z-index: 1;
   position: absolute;
   bottom: 0;
   left: 0;
-
+  background-color: white;
   color: black;
   transition: all 0.5s;
 }
