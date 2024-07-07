@@ -22,7 +22,8 @@ ENV BASE_API_URL=http://localhost:3000
 # Build the React app
 RUN npm run build
 
-# Expose the port the app runs on
+# Expose the port the app runs on  (only for documentation, does not actually publish the port)
+# this is for the port on the container, not the host/server
 EXPOSE 3000
 
 # Start the app using serve
