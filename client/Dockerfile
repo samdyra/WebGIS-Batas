@@ -16,9 +16,6 @@ RUN npm install -g serve
 # Copy the rest of the application code
 COPY . .
 
-# Set environment variables
-ENV BASE_API_URL=http://localhost:3000
-
 # Build the React app
 RUN npm run build
 

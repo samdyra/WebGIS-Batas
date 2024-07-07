@@ -10,4 +10,4 @@ build:
 # Run the Docker container
 .PHONY: run
 run:
-	docker run -p 3000:3000 --env-file .env --name $(CONTAINER_NAME) $(IMAGE_NAME)
+	docker run -p 3000:3000 -d --env-file .env --name $(CONTAINER_NAME) $(IMAGE_NAME) 
