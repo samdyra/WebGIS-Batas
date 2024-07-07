@@ -2,6 +2,8 @@ import { useRef, useState, useEffect } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
+const API_URL = import.meta.env.BASE_API_URL;
+
 const Map = () => {
   const mapContainer = useRef(null);
   const [viewState] = useState({
@@ -25,7 +27,7 @@ const Map = () => {
         id: 'shp_batas_wgs',
         source: {
           type: 'vector',
-          tiles: ['http://localhost:3000/v1/mvt/shp_batas_wgs/{z}/{x}/{y}'],
+          tiles: [`${API_URL}/v1/mvt/shp_batas_wgs/{z}/{x}/{y}`],
           maxzoom: 14,
           minzoom: 5,
         },
