@@ -28,8 +28,6 @@ const Map = () => {
         source: {
           type: 'vector',
           tiles: [`${API_URL}/v1/mvt/shp_batas_wgs/{z}/{x}/{y}`],
-          maxzoom: 14,
-          minzoom: 5,
         },
         'source-layer': 'shp_batas_wgs',
         type: 'line',
