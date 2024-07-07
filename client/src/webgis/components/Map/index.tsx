@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-const API_URL = import.meta.env.BASE_API_URL;
+const API_URL = 'http://localhost:3001';
 
 const Map = () => {
   const mapContainer = useRef(null);

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./client/.env
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./server/.env
+    depends_on:
+      - database
+
+  database:
+    image: postgis/postgis
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dwisam001
+      POSTGRES_DB: postgres
+    volumes:
+      - ./database/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
+      - ./database/seed_data.sql:/docker-entrypoint-initdb.d/seed_data.sql
