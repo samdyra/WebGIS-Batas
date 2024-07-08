@@ -1,8 +1,8 @@
 # Define variables
 COMPOSE_FILE = docker-compose.yml
-CLIENT_IMAGE_NAME = sisbatas-fe
-SERVER_IMAGE_NAME = sisbatas-be
-DATABASE_IMAGE_NAME = postgis/postgis
+CLIENT_IMAGE_NAME = app-client
+SERVER_IMAGE_NAME = app-server
+DATABASE_IMAGE_NAME = app-database
 CLIENT_CONTAINER_NAME = sisbatas-client
 SERVER_CONTAINER_NAME = sisbatas-server
 DATABASE_CONTAINER_NAME = sisbatas-database
