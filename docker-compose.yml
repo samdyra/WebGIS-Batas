@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   client:
+    image: dwiputrasam/client
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -13,6 +14,7 @@ services:
       - server
 
   server:
+    image: dwiputrasam/server
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -24,6 +26,7 @@ services:
       - database
 
   database:
+    image: dwiputrasam/database
     build:
       context: ./database
       dockerfile: Dockerfile
