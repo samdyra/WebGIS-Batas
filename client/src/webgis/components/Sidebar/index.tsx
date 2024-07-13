@@ -5,7 +5,7 @@ import s from './sidebar.module.scss';
 import openlogo from '../../../../public/openlogo.svg';
 
 type MenuItemsType = {
-  icon: string;
+  icon: () => React.JSX.Element;
   label: string;
 }[];
 
@@ -56,12 +56,9 @@ const SideBar = (props: IProps) => {
                   <div
                     className={`${s.logostyleactive} text-bold mx-auto flex w-fit flex-col items-center justify-center border-main-yellow p-[4px]`}
                   >
-                    <img
-                      src={item.icon}
-                      alt="logo"
-                      className="brightness-70 h-[32px] w-[32px] cursor-pointer transition-all duration-150 ease-linear active:opacity-80"
-                      onClick={() => handleOpenIndex(index, isSelected)}
-                    />
+                    <div className="cursor-pointer" onClick={() => handleOpenIndex(index, isSelected)}>
+                      {<item.icon />}
+                    </div>
                   </div>
                 </div>
               );
@@ -73,12 +70,9 @@ const SideBar = (props: IProps) => {
                   className={`${s.logostyle} text-bold mx-auto flex w-fit flex-col items-center justify-center p-[4px]`}
                   key={item.label}
                 >
-                  <img
-                    src={item.icon}
-                    alt="logo"
-                    className="brightness-70 h-[32px] w-[32px] cursor-pointer transition-all duration-150 ease-linear active:opacity-80"
-                    onClick={() => handleOpenIndex(index, isSelected)}
-                  />
+                  <div className="cursor-pointer" onClick={() => handleOpenIndex(index, isSelected)}>
+                    {<item.icon />}
+                  </div>
                 </div>
               </div>
             );
@@ -130,8 +124,7 @@ const SideBar = (props: IProps) => {
       </div>
       <div className={`border-r-2 border-t-2 ${s.wrapper2 ?? ''}`} style={wrapper2Style}>
         {isOpen && (
-          <h1 className="mb-2 pl-4 text-2xl font-bold text-main-green-dark ">{`${props?.menuItems?.[menuIndex]?.label}:
-        ${props?.menuItems?.[menuIndex]?.label}`}</h1>
+          <h1 className="mb-2 pl-4 text-2xl font-bold text-main-green ">{`${props?.menuItems?.[menuIndex]?.label}`}</h1>
         )}
 
         {isOpen ? props.children : null}

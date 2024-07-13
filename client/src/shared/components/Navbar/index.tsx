@@ -34,7 +34,7 @@ const Navbar = ({ className }: { className?: string }) => {
       </div>
       <nav className={`bg-white w-full top-0 start-0  shadow-inner z-20  ${className}`}>
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse ">
+          <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse ">
             <img src={logo} className="h-8" alt="Biro Pemotda Logo" />
             <span className="text-main-green self-center text-2xl font-bold whitespace-nowrap hidden sm:block">
               SISBATAS

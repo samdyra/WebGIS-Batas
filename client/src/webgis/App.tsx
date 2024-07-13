@@ -3,12 +3,14 @@ import { useState } from 'react';
 import MapComponent from './components/Map';
 import SettingBar from './components/Settingbar';
 import Detailbar from './components/Detailbar';
-import layer from '/layer.svg';
+import LayerIcon from '../shared/assets/svg/layer';
+import AlertIcon from '../shared/assets/svg/alert';
+import UploadIcon from '../shared/assets/svg/upload';
 
 const menuItems = [
-  { icon: layer, label: 'Bathymetry' },
-  { icon: layer, label: 'Water Level' },
-  { icon: layer, label: 'Surface Currents' },
+  { icon: LayerIcon, label: 'Manajemen Layer' },
+  { icon: AlertIcon, label: 'Lapor Batas' },
+  { icon: UploadIcon, label: 'Cek Batas' },
 ];
 
 function WebGIS() {
