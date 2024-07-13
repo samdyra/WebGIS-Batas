@@ -1,10 +1,12 @@
 import { useRef, useState, useEffect } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import useQueryBaseMap from '../../hooks/useQueryBaseMap';
 
 const API_URL = 'http://localhost:3001';
 
 const Map = () => {
+  const { baseMap } = useQueryBaseMap();
   const mapContainer = useRef(null);
   const [viewState] = useState({
     longitude: 107.6098,
@@ -12,12 +14,13 @@ const Map = () => {
     zoom: 10,
   });
 
+  console.log('map', baseMap);
+
   useEffect(() => {
     const { longitude, latitude, zoom } = viewState;
     const map = new maplibregl.Map({
       container: mapContainer?.current ?? '',
-      style: 'https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-      // style: 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      style: baseMap,
       center: [longitude, latitude],
       zoom: zoom,
     });
@@ -41,7 +44,7 @@ const Map = () => {
     });
 
     return () => map.remove();
-  }, [viewState]);
+  }, [viewState, baseMap]);
 
   return <div ref={mapContainer} style={{ width: '100%', height: '100vh' }} />;
 };
