@@ -4,6 +4,13 @@ CLIENT_IMAGE_NAME = dwiputrasam/sisbatas-client
 SERVER_IMAGE_NAME = dwiputrasam/sisbatas-server
 DATABASE_IMAGE_NAME = dwiputrasam/sisbatas-database
 
+# Run Locally
+.PHONY: local
+local:
+	@echo "Run Database"
+	docker-compose -f $(COMPOSE_FILE) up -d database
+	@sh ./run-local.sh
+
 # Build the Docker images
 .PHONY: build
 build:

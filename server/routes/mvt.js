@@ -5,7 +5,8 @@ const sql = (params, query) => {
       SELECT
         ST_AsMVTGeom (
           ST_Transform(${query.geom_column}, 3857),
-          ST_TileEnvelope(${params.z}, ${params.x}, ${params.y})
+          ST_TileEnvelope(${params.z}, ${params.x}, ${params.y}), 
+          4096, 0, false
         ) as geom
         ${query.columns ? `, ${query.columns}` : ''}
         ${query.id_column ? `, ${query.id_column}` : ''}
