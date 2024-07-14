@@ -32,3 +32,15 @@ CREATE TABLE "public"."shp_batas_wgs" (
     "shape_leng" float8,
     PRIMARY KEY ("pk")
 );
+
+
+
+-- Table Definition
+CREATE TABLE "public"."batas_titik" (
+    "id" int8 NOT NULL,
+    "geom" geometry(MultiPoint,4326),
+    "name" varchar(80),
+    "desc" varchar(80),
+    PRIMARY KEY ("id")
+);
+

@@ -14,8 +14,6 @@ const Map = () => {
     zoom: 10,
   });
 
-  console.log('map', baseMap);
-
   useEffect(() => {
     const { longitude, latitude, zoom } = viewState;
     const map = new maplibregl.Map({
@@ -39,6 +37,21 @@ const Map = () => {
           'line-color': '#ed6498',
           'line-width': 5,
           'line-opacity': 0.8,
+        },
+      });
+
+      map.addLayer({
+        id: 'batas_titik',
+        source: {
+          type: 'vector',
+          tiles: [`${API_URL}/v1/mvt/batas_titik/{z}/{x}/{y}`],
+        },
+        'source-layer': 'batas_titik',
+        type: 'circle',
+        minzoom: 5,
+        paint: {
+          'circle-radius': 10,
+          'circle-color': '#007cbf',
         },
       });
     });

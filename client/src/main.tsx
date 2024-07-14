@@ -5,7 +5,7 @@ import WebGIS from './webgis/App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import Navbar from './shared/components/Navbar/index.tsx';
-import { useQueryClient, QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
 

@@ -2,7 +2,7 @@
 import React, { memo, useState } from 'react';
 import s from './sidebar.module.scss';
 
-import openlogo from '../../../../public/openlogo.svg';
+import openlogo from '/openlogo.svg';
 
 type MenuItemsType = {
   icon: () => React.JSX.Element;
