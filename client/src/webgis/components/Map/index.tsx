@@ -2,11 +2,14 @@ import { useRef, useState, useEffect } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import useQueryBaseMap from '../../hooks/useQueryBaseMap';
-
-const API_URL = 'http://localhost:3001';
+import { API_ENDPOINT } from '../../../shared/constants/secret';
+import useQueryMapLayers from '../../hooks/useQueryLayers';
 
 const Map = () => {
   const { baseMap } = useQueryBaseMap();
+  const { data: layers } = useQueryMapLayers();
+  console.log(layers);
+
   const mapContainer = useRef(null);
   const [viewState] = useState({
     longitude: 107.6098,
@@ -28,7 +31,7 @@ const Map = () => {
         id: 'shp_batas_wgs',
         source: {
           type: 'vector',
-          tiles: [`${API_URL}/v1/mvt/shp_batas_wgs/{z}/{x}/{y}`],
+          tiles: [`${API_ENDPOINT}/v1/mvt/shp_batas_wgs/{z}/{x}/{y}`],
         },
         'source-layer': 'shp_batas_wgs',
         type: 'line',
@@ -44,7 +47,7 @@ const Map = () => {
         id: 'batas_titik',
         source: {
           type: 'vector',
-          tiles: [`${API_URL}/v1/mvt/batas_titik/{z}/{x}/{y}`],
+          tiles: [`${API_ENDPOINT}/v1/mvt/batas_titik/{z}/{x}/{y}`],
         },
         'source-layer': 'batas_titik',
         type: 'circle',

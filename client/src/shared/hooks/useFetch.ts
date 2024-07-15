@@ -31,6 +31,6 @@ export default function useFetch<TResponse = unknown, TArgs = unknown>(fn: (args
 
     return fetch<TResponse>({
       ...config,
-    });
+    }).then((res) => res.data);
   };
 }

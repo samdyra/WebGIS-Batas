@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from 'react-query';
+import { K_BASEMAP_QUERY_KEY } from '../../shared/constants/queryKeys';
 
 const basemaps = {
   osm: 'https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json',
@@ -8,8 +9,7 @@ const basemaps = {
 const useQueryBaseMap = () => {
   const queryClient = useQueryClient();
 
-  // Initialize the baseMap state with useQuery
-  const { data: baseMap = 'osm' } = useQuery('baseMap', () => 'osm', {
+  const { data: baseMap = 'osm' } = useQuery(K_BASEMAP_QUERY_KEY, () => 'osm', {
     initialData: 'osm',
   });
 
