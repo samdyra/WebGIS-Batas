@@ -16,6 +16,7 @@ const menuItems = [
 function WebGIS() {
   const [menuIndex, setMenuIndex] = useState(0);
   const [isDetailBarOpen, setIsDetailBarOpen] = useState(false);
+
   const handleOpenDetailBar = () => setIsDetailBarOpen(!isDetailBarOpen);
 
   return (
@@ -28,7 +29,7 @@ function WebGIS() {
         className="mt-lg"
       />
       <SettingBar />
-      <Sidebar menuItems={menuItems} menuIndex={menuIndex} setMenuIndex={setMenuIndex} />
+      <Sidebar menuItems={menuItems} menuIndex={menuIndex} setMenuIndex={setMenuIndex}></Sidebar>
       <MapComponent />
     </>
   );

@@ -66,7 +66,7 @@ const useQueryMVT = () => {
     });
   }, [layers]);
 
-  const query = useQuery([K_MAP_MVT_QUERY_KEY], getMVTLayers);
+  const query = useQuery([K_MAP_MVT_QUERY_KEY, layers], getMVTLayers);
 
   return query;
 };
