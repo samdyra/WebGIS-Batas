@@ -2,13 +2,11 @@ import { useRef, useState, useEffect } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import useQueryBaseMap from '../../hooks/useQueryBaseMap';
-import { API_ENDPOINT } from '../../../shared/constants/secret';
-import useQueryMapLayers from '../../hooks/useQueryLayers';
+import useQueryMVT from '../../hooks/useQueryMVT';
 
 const Map = () => {
   const { baseMap } = useQueryBaseMap();
-  const { data: layers } = useQueryMapLayers();
-  console.log(layers);
+  const { data: layers = [] } = useQueryMVT();
 
   const mapContainer = useRef(null);
   const [viewState] = useState({
@@ -27,40 +25,13 @@ const Map = () => {
     });
 
     map.on('load', () => {
-      map.addLayer({
-        id: 'shp_batas_wgs',
-        source: {
-          type: 'vector',
-          tiles: [`${API_ENDPOINT}/v1/mvt/shp_batas_wgs/{z}/{x}/{y}`],
-        },
-        'source-layer': 'shp_batas_wgs',
-        type: 'line',
-        minzoom: 5,
-        paint: {
-          'line-color': '#ed6498',
-          'line-width': 5,
-          'line-opacity': 0.8,
-        },
-      });
-
-      map.addLayer({
-        id: 'batas_titik',
-        source: {
-          type: 'vector',
-          tiles: [`${API_ENDPOINT}/v1/mvt/batas_titik/{z}/{x}/{y}`],
-        },
-        'source-layer': 'batas_titik',
-        type: 'circle',
-        minzoom: 5,
-        paint: {
-          'circle-radius': 10,
-          'circle-color': '#007cbf',
-        },
+      layers.forEach((layer) => {
+        map.addLayer({ ...layer });
       });
     });
 
     return () => map.remove();
-  }, [viewState, baseMap]);
+  }, [viewState, baseMap, layers]);
 
   return <div ref={mapContainer} style={{ width: '100%', height: '100vh' }} />;
 };

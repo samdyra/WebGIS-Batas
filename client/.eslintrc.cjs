@@ -5,7 +5,11 @@ const path = require('path');
 const config = {
   overrides: [
     {
-      extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
+      extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking',
+'plugin:react-hooks/recommended',
+    'plugin:@typescript-eslint/recommended',
+
+      ],
       files: ['*.ts', '*.tsx'],
       parserOptions: { project: path.join(__dirname, 'tsconfig.json') },
     },
@@ -29,10 +33,11 @@ const config = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     'no-underscore-dangle': 'warn',
     'react-native/no-raw-text': 'off',
-    'react-hooks/exhaustive-deps': 'off',
     'react/jsx-filename-extension': 'off',
     'no-multi-spaces': 'warn',
     'spaced-comment': 'off',
+    'react-hooks/rules-of-hooks': ['warn'],
+    'react-hooks/exhaustive-deps': ['warn'],
     eqeqeq: 'off',
     radix: 'warn',
     indent: [1, 2, { SwitchCase: 1 }],
