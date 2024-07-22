@@ -57,6 +57,10 @@ const useQueryMVT = () => {
           type: 'vector',
           tiles: [`${API_ENDPOINT}/v1/mvt/${item.table_name}/{z}/{x}/{y}`],
         },
+        layout: {
+          visibility: item?.visibility ? item.visibility : 'visible',
+        },
+        // @ts-ignore
         'source-layer': item.table_name,
         type: getLayerType(item.type),
         paint: getPaint(item.type),

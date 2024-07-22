@@ -16,6 +16,8 @@ const Map = () => {
   });
 
   useEffect(() => {
+    if (!mapContainer.current) return;
+
     const { longitude, latitude, zoom } = viewState;
     const map = new maplibregl.Map({
       container: mapContainer?.current ?? '',

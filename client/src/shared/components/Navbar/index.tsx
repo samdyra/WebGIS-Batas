@@ -37,7 +37,7 @@ const Navbar = ({ className }: { className?: string }) => {
           <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse ">
             <img src={logo} className="h-8" alt="Biro Pemotda Logo" />
             <span className="text-main-green self-center text-2xl font-bold whitespace-nowrap hidden sm:block">
-              SISBATAS
+              SIMBAD
             </span>
           </a>
           <div className="flex">
