@@ -10,6 +10,8 @@ const getLayerType = (geomType: geom_type) => {
   switch (geomType) {
     case 'MULTIPOINT':
       return 'circle';
+    case 'POINT':
+      return 'circle';
     case 'MULTILINESTRING':
       return 'line';
     case 'MULTIPOLYGON':
@@ -28,9 +30,16 @@ const getPaint = (geomType: geom_type) => {
       };
     case 'MULTILINESTRING':
       return {
-        'line-color': '#ed6498',
+        'line-color': 'red',
         'line-width': 5,
         'line-opacity': 0.8,
+      };
+    case 'POINT':
+      return {
+        'circle-radius': 7,
+        'circle-color': '#007cbf',
+        'circle-opacity': 0.8,
+        'circle-stroke-width': 1,
       };
     case 'MULTIPOLYGON':
       return {
@@ -39,7 +48,7 @@ const getPaint = (geomType: geom_type) => {
       };
     default:
       return {
-        'line-color': '#ed6498',
+        'line-color': 'red',
         'line-width': 5,
         'line-opacity': 0.8,
       };
@@ -55,7 +64,7 @@ const useQueryMVT = () => {
         id: item.table_name,
         source: {
           type: 'vector',
-          tiles: [`${API_ENDPOINT}/v1/mvt/${item.table_name}/{z}/{x}/{y}`],
+          tiles: [`${API_ENDPOINT}/v1/mvt/${item.table_name}/{z}/{x}/{y}?columns=*`],
         },
         layout: {
           visibility: item?.visibility ? item.visibility : 'visible',
@@ -70,7 +79,7 @@ const useQueryMVT = () => {
     });
   }, [layers]);
 
-  const query = useQuery([K_MAP_MVT_QUERY_KEY, layers], getMVTLayers);
+  const query = useQuery([K_MAP_MVT_QUERY_KEY, layers, 'asd'], getMVTLayers);
 
   return query;
 };
