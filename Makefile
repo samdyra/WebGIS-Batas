@@ -33,6 +33,14 @@ down:
 .PHONY: rebuild
 rebuild: down build up
 
+# Rebuild server image
+.PHONY: rebuild-server
+rebuild-server:
+	@echo "Rebuilding server image..."
+	docker-compose -f $(COMPOSE_FILE) down server
+	docker-compose -f $(COMPOSE_FILE) build server
+	docker-compose -f $(COMPOSE_FILE) up -d server
+
 # View Docker Compose logs
 .PHONY: logs
 logs:

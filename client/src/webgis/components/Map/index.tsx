@@ -32,6 +32,14 @@ const Map = () => {
       });
     });
 
+    // Add click event listener
+    map.on('click', (e) => {
+      const features = map.queryRenderedFeatures(e.point);
+      if (features.length) {
+        console.log(features);
+      }
+    });
+
     return () => map.remove();
   }, [viewState, baseMap, layers]);
 

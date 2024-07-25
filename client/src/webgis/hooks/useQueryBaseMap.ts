@@ -15,7 +15,7 @@ const useQueryBaseMap = () => {
 
   const switchBaseMap = () => {
     const newBaseMap = baseMap === 'osm' ? 'satellite' : 'osm';
-    queryClient.setQueryData('baseMap', newBaseMap);
+    queryClient.setQueryData(K_BASEMAP_QUERY_KEY, newBaseMap);
   };
 
   const style = baseMap === 'osm' ? basemaps.osm : basemaps.satellite;

@@ -15,7 +15,7 @@ const menuItems = [
   { icon: UploadIcon, label: 'Cek Batas' },
 ];
 
-function WebGIS() {
+function WebGISScreen() {
   const [menuIndex, setMenuIndex] = useState(0);
   const [isDetailBarOpen, setIsDetailBarOpen] = useState(false);
   const { data: layers = [], setVisibility } = useQueryLayers();
@@ -58,4 +58,4 @@ function WebGIS() {
   );
 }
 
-export default WebGIS;
+export default WebGISScreen;
