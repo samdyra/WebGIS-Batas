@@ -8,7 +8,7 @@ const Navbar = ({ className }: { className?: string }) => {
   return (
     <>
       <div
-        className={`fixed top-0 mt-16  inset-x-0 p-4 transition-transform transform bg-white z-10 ${
+        className={`fixed top-0 mt-16  inset-x-0 p-4 transition-transform transform bg-none z-10 ${
           isExpanded ? 'translate-y-0' : '-translate-y-full hidden'
         }`}
       >
@@ -32,7 +32,7 @@ const Navbar = ({ className }: { className?: string }) => {
           </li>
         </ul>
       </div>
-      <nav className={`bg-white w-full top-0 start-0  shadow-inner z-20  ${className}`}>
+      <nav className={`absolute bg-transparent w-full top-0 start-0  shadow-inner z-20  ${className}`}>
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse ">
             <img src={logo} className="h-8" alt="Biro Pemotda Logo" />
