@@ -1,9 +1,13 @@
 import { useState, memo } from 'react';
 import logo from '/logo-pemotda.png';
-
+import { useLocation } from 'react-router-dom';
 const Navbar = ({ className }: { className?: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleExpand = () => setIsExpanded(!isExpanded);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  const bgClass = isHomePage ? 'bg-transparent' : 'bg-white';
 
   return (
     <>
@@ -32,7 +36,7 @@ const Navbar = ({ className }: { className?: string }) => {
           </li>
         </ul>
       </div>
-      <nav className={`absolute bg-transparent w-full top-0 start-0  shadow-inner z-20  ${className}`}>
+      <nav className={`absolute ${bgClass} w-full top-0 start-0  shadow-inner z-20  ${className}`}>
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse ">
             <img src={logo} className="h-8" alt="Biro Pemotda Logo" />

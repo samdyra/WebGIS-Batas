@@ -1,5 +1,12 @@
 import Grid from './grid';
 import { WobbleCard } from './wobbleCard';
+import CountUp from 'react-countup';
+import VisibilitySensor from 'react-visibility-sensor';
+import Article from './article';
+import Gallery from './gallery/gallery';
+import FAQ from './faq'; //eslint-disable-line
+import CarouselFeatures from './carouselFeature';
+
 function Home() {
   return (
     <>
@@ -9,9 +16,9 @@ function Home() {
       <div className="w-32 h-32 bg-main-red">infografis dikit</div>
       <div className="w-32 h-32 bg-main-red">artikel2</div>
       <div className="w-32 h-32 bg-main-red">galeri foto</div> */}
-      <div className=" mx-auto bg-white text-white overflow-hidden ">
-        <div className="flex gap-5  justify-center items-center  h-[75vh] max-w-screen-xl mx-auto  items-center  pt-0 lg:flex lg:flex-wrap lg:pt-4 relative">
-          <div className="lg:w-3/6 z-50 bg-main-green p-10   rounded">
+      <div className=" mx-auto bg-main-green text-white overflow-hidden ">
+        <div className="flex gap-5  justify-center items-center  h-[720px] max-w-screen-xl mx-auto  items-center  pt-0 lg:flex lg:flex-wrap lg:pt-4 relative">
+          <div className="lg:w-3/6 z-50  p-10 text-center  rounded">
             <h2 className="max-w-xl lg:text-[4.2em] text-3xl font-bold leading-none  inline-block">Landing Page</h2>
 
             <p className="mt-6 max-w-2xl text-xl font-semibold text-[#404040]">
@@ -19,28 +26,19 @@ function Home() {
               porttitor neque ipsum.
             </p>
           </div>
-          {/* <div className="w-[48%]">
-            <div className="flex gap-5">
-              <WobbleCard containerClassName="w-2/3">asdas</WobbleCard>
-              <WobbleCard containerClassName="w-1/3">asdas</WobbleCard>
-            </div>
-            <WobbleCard containerClassName="mt-5">asdas</WobbleCard>
-          </div> */}
-          {/* <div className="mb-20 mt-44 hidden w-full flex-col lg:mt-12 lg:inline-block lg:w-3/6">
-            <img src="/images/placeholder.png" alt="Hero" />
-          </div>
-          <div className="my-20 inline-block w-full flex-col lg:mt-0 lg:hidden lg:w-2/5">
-            <img src="/images/placeholder.png" alt="image" />
-          </div> */}
+
           <Grid />
+          <img
+            src="contour.png"
+            className="absolute opacity-20 inset-0 object-cover object-center w-full h-full z-0 "
+          />
         </div>
       </div>
 
-      <section className="w-full bg-main-green ">
-        <div className="mt-0 bg-white lg:mt-40">
-          <div className="text-black">
-            <div
-              className="
+      <div className="w-4/5  py-20 h-fit drop-shadow-lg  bg-white rounded-xl absolute z-10 top-[550px] left-1/2 translate-x-[-50%]  ">
+        <div className="text-black">
+          <div
+            className="
               max-w-9xl
               mx-auto
               flex
@@ -49,22 +47,22 @@ function Home() {
               justify-center
               px-5
             "
-            >
-              <div className="mr-0 mb-6 w-full py-4 text-center lg:w-2/3">
-                <h2 className="mb-4 text-4xl font-bold sm:text-5xl">Sem enim cursus orci at.</h2>
-                <p className="mb-4 text-lg leading-relaxed">
-                  In ullamcorper magna nunc, non molestie augue feugiat eget. Mauris, vitae et, vitae et cursus amet
-                  tincidunt feugiat nulla. Senectus maecenas diam risus sodales dictum eu. Eget cursus sit bibendum
-                  pulvinar faucibus vitae nam sed. Faucibus vel laoreet.
-                </p>
-                <a href="/" className="underline-blue font-semibold">
-                  Learn more
-                </a>
-              </div>
-              <img
-                className="
+          >
+            <div className="mr-0 mb-6 w-full py-4 text-center lg:w-2/3">
+              <h2 className="mb-4 text-4xl font-bold sm:text-5xl">Sem enim cursus orci at.</h2>
+              <p className="mb-4 text-lg leading-relaxed">
+                In ullamcorper magna nunc, non molestie augue feugiat eget. Mauris, vitae et, vitae et cursus amet
+                tincidunt feugiat nulla. Senectus maecenas diam risus sodales dictum eu. Eget cursus sit bibendum
+                pulvinar faucibus vitae nam sed. Faucibus vel laoreet.
+              </p>
+              <a href="/" className="underline-blue font-semibold">
+                Learn more
+              </a>
+            </div>
+            <img
+              className="
                 lg:w-5/7
-                mb-40
+                mb-10
                 hidden
                 w-5/6
                 rounded object-cover
@@ -72,34 +70,23 @@ function Home() {
                 lg:inline-block 
                 lg:w-4/6
               "
-                src="/images/placeholder.png"
-                alt="img"
-              />
-
-              <img
-                className="
-              mb-24
-              inline-block
-              w-5/6
-              rounded
-              object-cover object-center
-              lg:hidden
-              lg:w-4/6 
-            "
-                src="/images/placeholder.png"
-                alt="img"
-              />
-            </div>
+              src="/webgis.png"
+              alt="img"
+            />
           </div>
-          <div className="mx-auto">
-            <div className="mx-auto px-5 py-24 lg:px-24">
-              <div className="my-10 flex w-full flex-col text-center">
-                <h2 className="mb-5 text-2xl font-bold text-black lg:text-3xl">
-                  In ullamcorper magna nunc, non molestie augue feugiat eget.
-                </h2>
-              </div>
-              <div
-                className="
+        </div>
+      </div>
+
+      <section className="w-full  mt-[900px] ">
+        <div className="mt-0 bg-white ">
+          <div className="mx-auto px-5 py-24 lg:px-24 rounded-xl bg-white  my-44 w-4/5">
+            <div className="my-10 flex w-full flex-col text-center">
+              <h2 className="mb-5 text-2xl font-bold text-black lg:text-3xl">
+                In ullamcorper magna nunc, non molestie augue feugiat eget.
+              </h2>
+            </div>
+            <div
+              className="
                 grid grid-cols-2
                 gap-16
                 text-center
@@ -107,18 +94,23 @@ function Home() {
                 font-extrabold
                 text-4xl
                 text-main-green-dark"
-              >
-                <div className="hidden items-center justify-center lg:inline-block">1000</div>
-                <div className="hidden items-center justify-center lg:inline-block">1000</div>
-                <div className="flex items-center justify-center">1000</div>
-                <div className="flex items-center justify-center">1000</div>
-                <div className="hidden items-center justify-center lg:inline-block">1000</div>
-                <div className="hidden items-center justify-center lg:inline-block">1000</div>
-              </div>
-              <div className="my-12 flex w-full flex-col pl-8 text-center">
-                <a
-                  href="/"
-                  className="
+            >
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="hidden items-center justify-center lg:inline-block">
+                  <CountUp end={246 * index + 245} redraw={true}>
+                    {({ countUpRef, start }) => (
+                      <VisibilitySensor onChange={start} delayedCall>
+                        <span ref={countUpRef} />
+                      </VisibilitySensor>
+                    )}
+                  </CountUp>
+                </div>
+              ))}
+            </div>
+            <div className="my-12 flex w-full flex-col pl-8 text-center">
+              <a
+                href="/"
+                className="
                   underline-blue
                   mb-8
                   mt-6
@@ -126,15 +118,14 @@ function Home() {
                   font-bold
                   text-black
                 "
-                >
-                  Ut eleifend.
-                </a>
-              </div>
+              >
+                Ut eleifend.
+              </a>
             </div>
           </div>
         </div>
 
-        <div className="mx-auto px-5 pt-32 pb-24 lg:px-24 text-white">
+        <div className="mx-auto px-5 pt-32 pb-24 lg:px-24 text-white bg-main-green">
           <div className="my-3 flex w-full flex-col text-left lg:text-center">
             <h2 className="bold mb-8 text-4xl font-bold leading-tight  lg:text-6xl">
               Lorem ipsum elit sit unar, <br className="hidden lg:inline-block" />
@@ -142,23 +133,23 @@ function Home() {
             </h2>
           </div>
 
-          <div className="flex w-full flex-row justify-center pt-24 text-center">
-            <a href="/" className="underline-blue px-8 text-xl font-semibold text-black">
+          <div className="flex w-full flex-row justify-center pb-24 text-center">
+            <a href="/" className="underline-blue px-8 text-xl font-semibold text-white">
               Ut eleifend.
             </a>
-            <a href="/" className="underline-gray px-6 text-xl font-semibold text-gray-700">
+            <a href="/" className="underline-gray px-6 text-xl font-semibold text-main-yellow">
               Tempus in.
             </a>
           </div>
+          <div className="invisible mx-auto flex max-w-6xl p-3 pb-32 lg:visible lg:px-2">
+            <img src="/webgis1.png" alt="img" />
+          </div>
         </div>
 
-        <div className="invisible mx-auto flex max-w-6xl p-3 pb-32 lg:visible lg:px-2">
-          <img src="/images/placeholder.png" alt="img" />
-        </div>
+        <Article />
+        <CarouselFeatures />
 
-        <div className="bg-white text-black">
-          Artikel
-          <div className="my-24 p-4 text-black">
+        {/* <div className="my-24 p-4 text-black">
             <div className="max-w-9xl mx-auto flex flex-col items-center bg-gradient-to-r from-main-blue to-main-blue px-5 py-24 lg:flex-row">
               <div className="flex flex-col items-center pb-16 pl-0 text-center lg:mb-0 lg:w-1/2 lg:flex-grow lg:items-start lg:pl-12 lg:pr-24 lg:text-left">
                 <h2 className="pb-4 text-2xl font-bold leading-tight lg:text-4xl">
@@ -183,8 +174,9 @@ function Home() {
                 />
               </div>
             </div>
-          </div>
-          <div className="mx-auto">
+          </div> */}
+
+        {/* <div className="mx-auto">
             <div className="max-w-screen-xl mx-auto px-5 py-24 lg:px-24">
               <div className="my-6 flex w-full flex-col text-left lg:text-center">
                 <h3 className="mb-8 text-5xl font-bold text-black">Dui tellus quis magna id ultricies eu sed.</h3>
@@ -193,28 +185,11 @@ function Home() {
                   amet. Ipsum accumsan arcu, aenean viverra penatibus quis. Laoreet.
                 </h3>
               </div>
-              <img src="/images/placeholder.png" alt="img" />
             </div>
-          </div>
-          <div className="text-black">
-            <div className="max-w-screen-xl mx-auto flex flex-col px-5 py-48 text-black lg:flex-row">
-              <div className="lg:mb-0 lg:w-full lg:max-w-xl">
-                <img className="rounded object-cover object-center" alt="image" src="/images/placeholder1.png" />
-              </div>
-              <div className="items-left flex flex-col pt-16 text-left lg:w-1/2 lg:flex-grow lg:items-start lg:pl-32 lg:text-left">
-                <h2 className="mb-2 text-lg leading-tight text-gray-700 sm:text-lg">
-                  Viverra enim diam gravida risus nisl.
-                </h2>
-                <h2 className="mb-6 text-lg font-bold sm:text-lg">Lectus eu.</h2>
-                <h2 className="mb-4 text-3xl font-bold sm:text-3xl">
-                  Lorem ipsum accumsan arcu, consectetur adipiscing elit. Sed eget enim vel.
-                </h2>
-                <a href="/" className="underline-blue mt-12 text-lg font-bold leading-relaxed">
-                  Ut convallis massa.
-                </a>
-              </div>
-            </div>
-          </div>
+          </div> */}
+        <FAQ />
+        <div className="w-4/5  mx-auto">
+          <Gallery />
         </div>
       </section>
 
