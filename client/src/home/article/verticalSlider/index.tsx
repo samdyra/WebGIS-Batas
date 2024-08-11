@@ -36,8 +36,8 @@ export default function Article() {
       }}
       modules={[Pagination]}
       slidesPerView={4}
-      spaceBetween={50}
-      className="mySwiper ml-0 mr-0  w-full max-h-[550px] h-[550px]    px-8 py-10 "
+      spaceBetween={70}
+      className="mySwiper ml-0 mr-0  w-full max-h-[600px] h-[550px]     lg:mt-0  pr-7 lg:px-8 py-10 "
       direction={'vertical'}
     >
       {Array.from({ length: 6 }).map((_, index) => (

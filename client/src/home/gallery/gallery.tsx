@@ -111,58 +111,6 @@ class Gallery extends Component<{}, GalleryState> {
     return (
       <div id="portfolio">
         <div className="wrapper">
-          <Row>
-            <Col xs={12} sm={12} md={8} lg={9}>
-              <div className="portfolio__nav">
-                <ul>
-                  <li
-                    className={pickedFilter === 'all' ? 'portfolio__nav-active font12' : 'font12'}
-                    onClick={() => this.filterGallery('all')}
-                  >
-                    ALL
-                  </li>
-                  <li
-                    className={pickedFilter === 'branding' ? 'portfolio__nav-active font12' : 'font12'}
-                    onClick={() => this.filterGallery('branding')}
-                  >
-                    BRANDING
-                  </li>
-                  <li
-                    className={pickedFilter === 'illustrations' ? 'portfolio__nav-active font12' : 'font12'}
-                    onClick={() => this.filterGallery('illustrations')}
-                  >
-                    ILLUSTRATIONS
-                  </li>
-                  <li
-                    className={pickedFilter === 'web' ? 'portfolio__nav-active font12' : 'font12'}
-                    onClick={() => this.filterGallery('web')}
-                  >
-                    WEB
-                  </li>
-                </ul>
-              </div>
-            </Col>
-            <Col xs={12} sm={12} md={4} lg={3}>
-              <div
-                className="portfolio__filter"
-                onMouseEnter={() => this.filterMenuHover(true)}
-                onMouseLeave={() => this.filterMenuHover(false)}
-              >
-                <p className="font12">{pickedFilterDropdown} FIRST</p>
-                <img src="portfolio/arrow.png" alt="arrow" />
-                {filterMenuActive && (
-                  <div className="portfolio__filter-menu shadow">
-                    <p className="font12" onClick={() => this.filterDropDownHandler('NEWEST')}>
-                      NEWEST
-                    </p>
-                    <p className="font12" onClick={() => this.filterDropDownHandler('OLDEST')}>
-                      OLDEST
-                    </p>
-                  </div>
-                )}
-              </div>
-            </Col>
-          </Row>
           <Masonry breakpointCols={portfolioBreakpoints} className="my-masonry-grid" columnClassName="mint__gallery">
             {projectsRender}
           </Masonry>
