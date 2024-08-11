@@ -6,28 +6,6 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 
-// import required modules
-
-function Card() {
-  return (
-    <div className="max-w-sm w-full lg:max-w-20 lg:flex">
-      {/* <div
-        className="h-48 lg:h-auto lg:w-10 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
-        title="Woman holding a mug"
-      ></div> */}
-      <div className="border-r border-b border-l  hover:border-main-green-dark transition  border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
-        <div className="mb-8">
-          <div className="text-gray-900 font-bold text-base mb-2">Can coffee make you a better developer?</div>
-          <p className="text-gray-700 text-base w-full">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis
-            eaque, exercitationem praesentium nihil.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Article() {
   return (
     <Swiper

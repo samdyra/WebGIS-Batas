@@ -1,28 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
 // Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
 import Card from './card';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
 import VerticalSlider from './verticalSlider';
 // import required modules
-import { Pagination } from 'swiper/modules';
 
 export default function Article() {
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
   return (
     <div className="w-3/4  mx-auto  my-24 ">
       <h2 className=" text-2xl my-10 font-bold text-black lg:text-4xl text-center">Article</h2>

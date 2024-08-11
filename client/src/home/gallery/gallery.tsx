@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'react-flexbox-grid';
 import Masonry from 'react-masonry-css';
 import './portfolio.scss';
 
@@ -95,7 +94,7 @@ class Gallery extends Component<{}, GalleryState> {
   };
 
   render() {
-    const { filterResult, pickedFilter, filterMenuActive, pickedFilterDropdown } = this.state;
+    const { filterResult } = this.state;
 
     const projectsRender = filterResult?.map((project) => (
       <ProjectBox preview={project.preview} key={project.id} title={project.title} tag={project.tag} />

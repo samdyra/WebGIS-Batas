@@ -1,5 +1,4 @@
 import Grid from './grid';
-import { WobbleCard } from './wobbleCard';
 import CountUp from 'react-countup';
 import VisibilitySensor from 'react-visibility-sensor';
 import Article from './article';
@@ -17,7 +16,7 @@ function Home() {
       <div className="w-32 h-32 bg-main-red">artikel2</div>
       <div className="w-32 h-32 bg-main-red">galeri foto</div> */}
       <div className=" mx-auto bg-main-green text-white overflow-hidden ">
-        <div className="flex gap-5  justify-center items-center  h-[720px] max-w-screen-xl mx-auto  items-center  pt-0 lg:flex lg:flex-wrap lg:pt-4 relative">
+        <div className="flex gap-5  justify-center  h-[720px] max-w-screen-xl mx-auto  items-center  pt-0 lg:flex lg:flex-wrap lg:pt-4 relative">
           <div className="lg:w-3/6 z-50  p-10 text-center  rounded">
             <h2 className="max-w-xl lg:text-[4.2em] text-3xl font-bold leading-none  inline-block">Landing Page</h2>
 
