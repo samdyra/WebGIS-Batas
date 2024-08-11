@@ -9,23 +9,19 @@ export type GeneralErrorResponse = AxiosError<{
   message: string;
 }>;
 
-export type FetchConfig = AxiosRequestConfig & {
-  isGapuraGateway?: boolean;
-};
-
 const instance = axios.create({
   timeout: 1000 * 60 * 5, // 5 minutes
 });
 
-export const fetch = <T>(params: FetchConfig): AxiosPromise<T> => {
-  const baseURL = 'http://localhost:3001';
+export const fetch = <T>(params: AxiosRequestConfig): AxiosPromise<T> => {
+  const baseURL = 'http://localhost:8080';
 
   instance.defaults.baseURL = baseURL;
 
   return instance(params);
 };
 
-export default function useFetch<TResponse = unknown, TArgs = unknown>(fn: (args?: TArgs) => FetchConfig) {
+export default function useFetch<TResponse = unknown, TArgs = unknown>(fn: (args?: TArgs) => AxiosRequestConfig) {
   return async (args?: TArgs) => {
     const config = fn(args);
 

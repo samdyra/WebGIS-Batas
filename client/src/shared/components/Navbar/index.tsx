@@ -42,12 +42,13 @@ const Navbar = ({ className }: { className?: string }) => {
           </a>
           <div className="flex">
             <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-              <button
+              <a
+                href="/login"
                 type="button"
                 className="text-white bg-main-green hover:bg-main-green-dark focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center "
               >
-                Lapor Pak!
-              </button>
+                Login
+              </a>
               <button
                 onClick={handleExpand}
                 data-collapse-toggle="navbar-sticky"
@@ -75,7 +76,7 @@ const Navbar = ({ className }: { className?: string }) => {
               </button>
             </div>
             <div
-              className="items-center mr-12 justify-between hidden w-full md:flex md:w-auto md:order-1"
+              className="items-center mr-8 justify-between hidden w-full md:flex md:w-auto md:order-1"
               id="navbar-sticky "
             >
               <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
