@@ -62,7 +62,7 @@ function Home() {
               className="
                 lg:w-5/7
                 mb-10
-                hidden
+               
                 w-5/6
                 rounded object-cover
                 object-center
@@ -76,10 +76,10 @@ function Home() {
         </div>
       </div>
 
-      <section className="w-full  mt-[900px] ">
+      <section className="w-full  mt-[800px] 2xl:mt-[900px] ">
         <div className="mt-0 bg-white ">
-          <div className="mx-auto px-5 py-24 lg:px-24 rounded-xl bg-white  my-44 w-4/5">
-            <div className="my-10 flex w-full flex-col text-center">
+          <div className="mx-auto px-5  lg:px-24 rounded-xl bg-white my-44  w-4/5">
+            <div className="my-10 flex w-full flex-col text-center  ">
               <h2 className="mb-5 text-2xl font-bold text-black lg:text-3xl">
                 In ullamcorper magna nunc, non molestie augue feugiat eget.
               </h2>
@@ -95,7 +95,7 @@ function Home() {
                 text-main-green-dark"
             >
               {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="hidden items-center justify-center lg:inline-block">
+                <div key={index} className=" items-center justify-center lg:inline-block">
                   <CountUp end={246 * index + 245} redraw={true}>
                     {({ countUpRef, start }) => (
                       <VisibilitySensor onChange={start} delayedCall>
@@ -125,7 +125,7 @@ function Home() {
         </div>
 
         <div className="mx-auto px-5 pt-32 pb-24 lg:px-24 text-white bg-main-green">
-          <div className="my-3 flex w-full flex-col text-left lg:text-center">
+          <div className="my-3 flex w-full flex-col text-center">
             <h2 className="bold mb-8 text-4xl font-bold leading-tight  lg:text-6xl">
               Lorem ipsum elit sit unar, <br className="hidden lg:inline-block" />
               consectetur adipiscing elit.
@@ -140,7 +140,7 @@ function Home() {
               Tempus in.
             </a>
           </div>
-          <div className="invisible mx-auto flex max-w-6xl p-3 pb-32 lg:visible lg:px-2">
+          <div className=" mx-auto flex max-w-6xl p-3 pb-32 lg:visible lg:px-2">
             <img src="/webgis1.png" alt="img" />
           </div>
         </div>
@@ -148,44 +148,6 @@ function Home() {
         <Article />
         <CarouselFeatures />
 
-        {/* <div className="my-24 p-4 text-black">
-            <div className="max-w-9xl mx-auto flex flex-col items-center bg-gradient-to-r from-main-blue to-main-blue px-5 py-24 lg:flex-row">
-              <div className="flex flex-col items-center pb-16 pl-0 text-center lg:mb-0 lg:w-1/2 lg:flex-grow lg:items-start lg:pl-12 lg:pr-24 lg:text-left">
-                <h2 className="pb-4 text-2xl font-bold leading-tight lg:text-4xl">
-                  Lorem ipsum mi at amet, consecteturadipiscing elit. Mattis.
-                </h2>
-                <p className="text-md mb-8 lg:text-xl">
-                  Lorem ipsum praesent amet, consectetur adipiscing elit. Cursus ullamcorper id tristique tincidunt.
-                  Tincidunt feugiat at mi feugiat hendrerit. Ac faucibus accumsan, quis lacus, lectus eget bibendum. At
-                  praesent quisque sollicitudin fusce.
-                </p>
-              </div>
-              <div className="w-4/7 pr-12 lg:w-2/5">
-                <img
-                  src="/images/placeholder.png"
-                  className="hidden object-cover object-center lg:inline-block"
-                  alt="image"
-                />
-                <img
-                  src="/images/placeholder.png"
-                  className="inline-block object-cover object-center lg:hidden"
-                  alt="image"
-                />
-              </div>
-            </div>
-          </div> */}
-
-        {/* <div className="mx-auto">
-            <div className="max-w-screen-xl mx-auto px-5 py-24 lg:px-24">
-              <div className="my-6 flex w-full flex-col text-left lg:text-center">
-                <h3 className="mb-8 text-5xl font-bold text-black">Dui tellus quis magna id ultricies eu sed.</h3>
-                <h3 className="mb-12 px-0 text-lg font-semibold text-gray-900 lg:px-52">
-                  Lorem ipsum accumsan arcu, consectetur adipiscing elit. Aliquet vestibulum molestie amet, maecenas id
-                  amet. Ipsum accumsan arcu, aenean viverra penatibus quis. Laoreet.
-                </h3>
-              </div>
-            </div>
-          </div> */}
         <FAQ />
         <div className="w-4/5  mx-auto">
           <Gallery />

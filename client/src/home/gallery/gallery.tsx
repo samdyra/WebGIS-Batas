@@ -24,7 +24,7 @@ interface ProjectBoxProps {
 }
 
 const ProjectBox: React.FC<ProjectBoxProps> = ({ preview, title, tag }) => (
-  <div className="portfolio__box">
+  <div className="portfolio__box w-fit">
     <img src={preview} alt="project" />
     <div className="portfolio__hover-info flex-center">
       <div className="text-center">
@@ -109,7 +109,7 @@ class Gallery extends Component<{}, GalleryState> {
 
     return (
       <div id="portfolio">
-        <div className="wrapper">
+        <div className="wrapper w-fit mx-auto">
           <Masonry breakpointCols={portfolioBreakpoints} className="my-masonry-grid" columnClassName="mint__gallery">
             {projectsRender}
           </Masonry>
