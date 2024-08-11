@@ -5,7 +5,7 @@ import Article from './article';
 import Gallery from './gallery/gallery';
 import FAQ from './faq'; //eslint-disable-line
 import CarouselFeatures from './carouselFeature';
-
+import { WobbleCard } from './wobbleCard';
 function Home() {
   return (
     <>
@@ -78,7 +78,7 @@ function Home() {
 
       <section className="w-full  mt-[800px] 2xl:mt-[900px] ">
         <div className="mt-0 bg-white ">
-          <div className="mx-auto px-5  lg:px-24 rounded-xl bg-white my-44  w-4/5">
+          <div className="mx-auto px-5  lg:px-24 rounded-xl bg-white my-44  w-full">
             <div className="my-10 flex w-full flex-col text-center  ">
               <h2 className="mb-5 text-2xl font-bold text-black lg:text-3xl">
                 In ullamcorper magna nunc, non molestie augue feugiat eget.
@@ -86,25 +86,52 @@ function Home() {
             </div>
             <div
               className="
-                grid grid-cols-2
+                grid grid-cols-1
                 gap-16
                 text-center
-                lg:grid-cols-6
+             
+                lg:grid-cols-3
                 font-extrabold
                 text-4xl
                 text-main-green-dark"
             >
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className=" items-center justify-center lg:inline-block">
-                  <CountUp end={246 * index + 245} redraw={true}>
-                    {({ countUpRef, start }) => (
-                      <VisibilitySensor onChange={start} delayedCall>
-                        <span ref={countUpRef} />
-                      </VisibilitySensor>
-                    )}
-                  </CountUp>
-                </div>
-              ))}
+              <WobbleCard className="flex flex-col justify-center items-center gap-16 bg-main-green">
+                <p>this is stat</p>
+                Stats is Up
+                <CountUp end={246} redraw={true}>
+                  {({ countUpRef, start }) => (
+                    <VisibilitySensor onChange={start} delayedCall>
+                      <span ref={countUpRef} />
+                    </VisibilitySensor>
+                  )}
+                </CountUp>
+              </WobbleCard>
+              <div className="col-span-1  flex  flex-row lg:flex-col  gap-6">
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <WobbleCard key={index} className=" items-center justify-center  ">
+                    <CountUp end={246 * index + 245} redraw={true}>
+                      {({ countUpRef, start }) => (
+                        <VisibilitySensor onChange={start} delayedCall>
+                          <span ref={countUpRef} />
+                        </VisibilitySensor>
+                      )}
+                    </CountUp>
+                  </WobbleCard>
+                ))}
+              </div>
+              <div className="col-span-1 flex  flex-row lg:flex-col  gap-6">
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <WobbleCard key={index} className=" items-center justify-center ">
+                    <CountUp end={246 * index + 594} redraw={true}>
+                      {({ countUpRef, start }) => (
+                        <VisibilitySensor onChange={start} delayedCall>
+                          <span ref={countUpRef} />
+                        </VisibilitySensor>
+                      )}
+                    </CountUp>
+                  </WobbleCard>
+                ))}
+              </div>
             </div>
             <div className="my-12 flex w-full flex-col pl-8 text-center">
               <a
