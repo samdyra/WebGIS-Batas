@@ -28,7 +28,7 @@ function Home() {
 
           <Grid />
           <img
-            src="contour.png"
+            src="contour.webp"
             className="absolute opacity-20 inset-0 object-cover object-center w-full h-full z-0 "
           />
         </div>
@@ -69,7 +69,7 @@ function Home() {
                 lg:inline-block 
                 lg:w-4/6
               "
-              src="/webgis.png"
+              src="/webgis.webp"
               alt="img"
             />
           </div>
@@ -141,7 +141,7 @@ function Home() {
             </a>
           </div>
           <div className=" mx-auto flex max-w-6xl p-3 pb-32 lg:visible lg:px-2">
-            <img src="/webgis1.png" alt="img" />
+            <img src="/webgis1.webp" alt="img" />
           </div>
         </div>
 

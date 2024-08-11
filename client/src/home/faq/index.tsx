@@ -42,7 +42,7 @@ export function Faq() {
           <Accordion type="single" collapsible>
             {FAQS.map(({ title, desc }, key) => (
               <AccordionItem value={`item-${key}`} key={key}>
-                <AccordionTrigger>{title}</AccordionTrigger>
+                <AccordionTrigger className="text-lg lg:text-xl">{title}</AccordionTrigger>
                 <AccordionContent>{desc}</AccordionContent>
               </AccordionItem>
             ))}
