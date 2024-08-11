@@ -30,7 +30,7 @@ export default function Article() {
             <h2 className=" text-xl font-bold text-gray-700 lg:text-2xl">Popular</h2>
           </div>
           <div className="flex pt-10 gap-5 lg:flex-row flex-col  ">
-            {Array.from({ length: screenWidth > 1280 || screenWidth < 500 ? 3 : 2 }).map((_, index) => (
+            {Array.from({ length: screenWidth > 1280 ? 3 : screenWidth < 500 ? 1 : 2 }).map((_, index) => (
               <div key={index} className="  w-fit flex items-center justify-center ">
                 <Card />
               </div>

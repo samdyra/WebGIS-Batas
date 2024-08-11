@@ -5,6 +5,8 @@ import WebGISScreen from './webgis/WebGISScreen.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import Navbar from './shared/components/Navbar/index.tsx';
+import FloatingNavbar from './shared/components/FloatingNavbar/index.tsx';
+
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
@@ -14,7 +16,7 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <>
-        <Navbar />
+        <FloatingNavbar />
         <App />
       </>
     ),
