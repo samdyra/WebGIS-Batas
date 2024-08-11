@@ -1,20 +1,13 @@
-import Grid from './grid';
 import CountUp from 'react-countup';
 import VisibilitySensor from 'react-visibility-sensor';
 import Article from './article';
 import Gallery from './gallery/gallery';
-import FAQ from './faq'; //eslint-disable-line
+import FAQ from './faq';
 import CarouselFeatures from './carouselFeature';
 
 function Home() {
   return (
     <>
-      {/* <div className="w-32 h-32 bg-main-red">Landing page</div>
-      <div className="w-32 h-32 bg-main-red">deskripsi singkat</div>
-      <div className="w-32 h-32 bg-main-red">deskripsi singkat</div>
-      <div className="w-32 h-32 bg-main-red">infografis dikit</div>
-      <div className="w-32 h-32 bg-main-red">artikel2</div>
-      <div className="w-32 h-32 bg-main-red">galeri foto</div> */}
       <div className=" mx-auto bg-main-green text-white overflow-hidden ">
         <div className="flex gap-5  justify-center  h-[720px] max-w-screen-xl mx-auto  items-center  pt-0 lg:flex lg:flex-wrap lg:pt-4 relative">
           <div className="lg:w-3/6 z-50  p-10 text-center  rounded">
@@ -26,7 +19,6 @@ function Home() {
             </p>
           </div>
 
-          <Grid />
           <img
             src="contour.webp"
             className="absolute opacity-20 inset-0 object-cover object-center w-full h-full z-0 "
