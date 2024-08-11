@@ -1,4 +1,7 @@
 import { type Config } from 'tailwindcss';
+import defaultTheme from 'tailwindcss/defaultTheme';
+import colors from 'tailwindcss/colors';
+import plugin from 'tailwindcss/plugin';
 
 export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './src/index.css'],
@@ -17,10 +20,24 @@ export default {
         lg: '3rem', // 48px
         xl: '4rem', // 64px
       },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
     },
   },
   plugins: [
-    function ({ addUtilities }) {
+    plugin(function ({ addUtilities }) {
       const newUtilities = {
         '.p-xs': { padding: '0.5rem' },
         '.p-sm': { padding: '1rem' },
@@ -74,6 +91,27 @@ export default {
         '.ml-xl': { marginLeft: '4rem' },
       };
       addUtilities(newUtilities, ['responsive', 'hover']);
-    },
+    }),
+    plugin(function ({ addBase, theme }) {
+      let allColors = flattenColorPalette(theme('colors'));
+      let newVars = Object.fromEntries(Object.entries(allColors).map(([key, val]) => [`--${key}`, val]));
+
+      addBase({
+        ':root': newVars,
+      });
+    }),
   ],
 } satisfies Config;
+
+function flattenColorPalette(colors: object): object {
+  return Object.assign(
+    {},
+    ...Object.entries(colors ?? {}).flatMap(([color, values]) =>
+      typeof values == 'object'
+        ? Object.entries(flattenColorPalette(values)).map(([number, hex]) => ({
+            [color + (number === 'DEFAULT' ? '' : `-${number}`)]: hex,
+          }))
+        : [{ [`${color}`]: values }]
+    )
+  );
+}
