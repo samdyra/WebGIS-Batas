@@ -8,6 +8,8 @@ import Navbar from './shared/components/Navbar/index.tsx';
 import FloatingNavbar from './shared/components/FloatingNavbar/index.tsx';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
+import AdminScreen from './admin/AdminScreen.tsx';
+import LoginScreen from './login/LoginScreen.tsx';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +29,24 @@ const router = createBrowserRouter([
       <div className="h-screen overflow-hidden">
         <Navbar className="border-b-2" />
         <WebGISScreen />
+      </div>
+    ),
+  },
+  {
+    path: '/admin',
+    element: (
+      <div className="h-screen overflow-hidden">
+        {/* <Navbar className="border-b-2" /> */}
+        <AdminScreen />
+      </div>
+    ),
+  },
+  {
+    path: '/login',
+    element: (
+      <div className="h-screen overflow-hidden">
+        {/* <Navbar className="border-b-2" /> */}
+        <LoginScreen />
       </div>
     ),
   },
