@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '../../../lib/utils';
+import { cn } from '../../lib/utils';
 import logo from '/logo-pemotda.png';
 
 const FloatingNav = ({ className }: { className?: string }) => {

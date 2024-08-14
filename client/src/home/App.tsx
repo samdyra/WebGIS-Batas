@@ -1,10 +1,11 @@
 import CountUp from 'react-countup';
 import VisibilitySensor from 'react-visibility-sensor';
-import Article from './article';
-import Gallery from './gallery/gallery';
-import FAQ from './faq';
-import CarouselFeatures from './carouselFeature';
-import { WobbleCard } from './wobbleCard';
+import Article from './components/article';
+import Gallery from './components/gallery/gallery';
+import FAQ from './components/faq';
+import CarouselFeatures from './components/carouselFeature';
+import { WobbleCard } from './components/wobbleCard';
+
 function Home() {
   return (
     <>

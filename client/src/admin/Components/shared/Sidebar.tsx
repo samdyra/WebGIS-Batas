@@ -3,6 +3,7 @@ import { AiOutlineCloudUpload, AiOutlineLogout } from 'react-icons/ai';
 import { FaTable, FaBook, FaUser, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { IoIosWarning } from 'react-icons/io';
 import { FaMap } from 'react-icons/fa';
+import { MdArticle } from 'react-icons/md';
 
 type Props = {
   setActiveTab: (tab: string) => void;
@@ -45,6 +46,10 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
           <button onClick={() => setActiveTab('laporan')} className={buttonClass('laporan')}>
             <IoIosWarning size={18} className={isCollapsed ? '' : 'mr-2'} />
             <span className={isCollapsed ? 'hidden' : 'block'}>Data Laporan</span>
+          </button>
+          <button onClick={() => setActiveTab('articles')} className={buttonClass('documentation')}>
+            <MdArticle size={18} className={isCollapsed ? '' : 'mr-2'} />
+            <span className={isCollapsed ? 'hidden' : 'block'}>Articles</span>
           </button>
           <button onClick={() => setActiveTab('user')} className={buttonClass('user')}>
             <FaUser size={18} className={isCollapsed ? '' : 'mr-2'} />

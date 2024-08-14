@@ -38,6 +38,8 @@ const UploadForm: React.FC<UploadFormProps> = ({ setMessage }) => {
       const response = await axios.post('http://localhost:8080/geo/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization:
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjM3MzUzMDAsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.Qn7XuXPDzyrkiQM4DvnyxICEdA2dG2gC3EP-mdQSvKg',
         },
       });
       setMessage('Upload successful: ' + response.data.message);

@@ -9,7 +9,7 @@ import FloatingNavbar from './shared/components/FloatingNavbar/index.tsx';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AdminScreen from './admin/AdminScreen.tsx';
-import LoginScreen from './login/LoginScreen.tsx';
+import LoginScreen from './admin/Screens/LoginScreen.tsx';
 
 const queryClient = new QueryClient();
 

@@ -1,11 +1,12 @@
 import { useState, lazy, Suspense } from 'react';
-import Sidebar from './Components/Sidebar';
+import Sidebar from './Components/shared/Sidebar';
 
-const UploadForm = lazy(() => import('./Components/UploadForm'));
-const TableView = lazy(() => import('./Components/TableView'));
-const Documentation = lazy(() => import('./Components/Documentation'));
-const LaporanView = lazy(() => import('./Components/LaporanView'));
-const UserAccessView = lazy(() => import('./Components/UserAccess'));
+const UploadForm = lazy(() => import('./Screens/UploadDataScreen'));
+const TableView = lazy(() => import('./Screens/SpatialDataScreen'));
+const Documentation = lazy(() => import('./Screens/DocsScreen'));
+const LaporanView = lazy(() => import('./Screens/LaporanScreen'));
+const UserAccessView = lazy(() => import('./Screens/UserAccessScreen'));
+const ArticleView = lazy(() => import('./Screens/ArticleScreen'));
 
 const AdminScreen = () => {
   const [message, setMessage] = useState('');
@@ -24,6 +25,8 @@ const AdminScreen = () => {
         return <LaporanView />;
       case 'user':
         return <UserAccessView />;
+      case 'articles':
+        return <ArticleView />;
       default:
         return null;
     }
