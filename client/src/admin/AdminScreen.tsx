@@ -11,7 +11,6 @@ const ArticleView = lazy(() => import('./Screens/ArticleScreen'));
 const AdminScreen = () => {
   const [message, setMessage] = useState('');
   const [activeTab, setActiveTab] = useState('upload');
-  console.log(activeTab);
 
   const renderActiveTab = () => {
     switch (activeTab) {

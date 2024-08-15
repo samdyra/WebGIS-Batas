@@ -5,10 +5,13 @@ interface UploadFormProps {
   setMessage: React.Dispatch<React.SetStateAction<string>>;
 }
 
+type geom_type = 'POINT' | 'LINESTRING' | 'POLYGON';
+
 const UploadForm: React.FC<UploadFormProps> = ({ setMessage }) => {
   const [tableName, setTableName] = useState('');
-  const [type, setType] = useState('');
-  const [coordinate, setCoordinate] = useState('');
+  const [type, setType] = useState<geom_type>('LINESTRING');
+  const [coordinate, setCoordinate] = useState<[string, string]>(['106.8456', '-6.2088']);
+  const [color, setColor] = useState('#FF0000');
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,11 +20,16 @@ const UploadForm: React.FC<UploadFormProps> = ({ setMessage }) => {
     }
   };
 
+  const handleCoordinateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [lon, lat] = e.target.value.split(',').map((coord) => coord.trim());
+    setCoordinate([lon || '', lat || '']);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage('');
 
-    if (!tableName || !type || !file) {
+    if (!tableName || !type || !file || !color || !coordinate[0] || !coordinate[1]) {
       setMessage('Please fill in all required fields');
       return;
     }
@@ -30,8 +38,15 @@ const UploadForm: React.FC<UploadFormProps> = ({ setMessage }) => {
     formData.append('table_name', tableName);
     formData.append('type', type);
     formData.append('file', file);
-    if (coordinate) {
-      formData.append('coordinate', coordinate);
+    formData.append('color', color);
+
+    // Append each coordinate value separately
+    formData.append('coordinate', coordinate[0]);
+    formData.append('coordinate', coordinate[1]);
+
+    // Log the FormData contents
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
     }
 
     try {
@@ -39,15 +54,19 @@ const UploadForm: React.FC<UploadFormProps> = ({ setMessage }) => {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjM3MzUzMDAsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.Qn7XuXPDzyrkiQM4DvnyxICEdA2dG2gC3EP-mdQSvKg',
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjM4MjE3MjEsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.T92QXRCXkjS0c59VcCFDEEwJUTIrrlZdQirtG_XlMk8',
         },
       });
       setMessage('Upload successful: ' + response.data.message);
     } catch (error) {
-      setMessage('Upload failed');
+      if (axios.isAxiosError(error) && error.response) {
+        setMessage(`Upload failed: ${error.response.status} ${error.response.statusText}`);
+        console.error('Error data:', error.response.data);
+      } else {
+        setMessage('Upload failed');
+      }
     }
   };
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4 text-main-green">Upload Spatial Data</h3>
@@ -73,7 +92,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ setMessage }) => {
             type="text"
             id="type"
             value={type}
-            onChange={(e) => setType(e.target.value)}
+            onChange={(e) => setType(e.target.value as geom_type)}
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-main-blue focus:border-main-blue"
           />
@@ -85,9 +104,22 @@ const UploadForm: React.FC<UploadFormProps> = ({ setMessage }) => {
           <input
             type="text"
             id="coordinate"
-            value={coordinate}
-            onChange={(e) => setCoordinate(e.target.value)}
-            placeholder="e.g., 40.7128,-74.0060"
+            value={coordinate.join(', ')}
+            onChange={handleCoordinateChange}
+            placeholder="e.g., 106.8456, -6.2088"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-main-blue focus:border-main-blue"
+          />
+        </div>
+        <div>
+          <label htmlFor="color" className="block text-sm font-medium text-gray-700">
+            Color
+          </label>
+          <input
+            type="text"
+            id="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            placeholder="#007cbf"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-main-blue focus:border-main-blue"
           />
         </div>
