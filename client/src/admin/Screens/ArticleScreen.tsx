@@ -69,7 +69,7 @@ const ArticleView: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
           Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjM3MzUzMDAsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.Qn7XuXPDzyrkiQM4DvnyxICEdA2dG2gC3EP-mdQSvKg',
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjM5MDc0NzgsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.RsgIVvVxZ0wbkGyshYjROzU5iRphKfdC_KHA6tLYdao',
         },
         body: JSON.stringify(updatedArticle),
       });
@@ -93,7 +93,7 @@ const ArticleView: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
           Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjM3MzUzMDAsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.Qn7XuXPDzyrkiQM4DvnyxICEdA2dG2gC3EP-mdQSvKg',
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjM5MDc1OTEsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.fswmGB79yGwZR-TaO-UbUh7mSmASxhgPWSrTUaSX-3M',
         },
         body: JSON.stringify({
           ...newArticle,
@@ -115,9 +115,10 @@ const ArticleView: React.FC = () => {
     setIsEditModalOpen(true);
   };
 
-  const filteredArticles = articles.filter((article) =>
-    Object.values(article).some((value) => value.toString().toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredArticles =
+    articles?.filter((article) =>
+      Object.values(article).some((value) => value.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+    ) ?? [];
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -150,7 +151,7 @@ const ArticleView: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredArticles.map((article) => (
+          {filteredArticles?.map((article) => (
             <tr key={article.id} className="border-b">
               <td className="p-2">{article.id}</td>
               <td className="p-2">{article.title}</td>
