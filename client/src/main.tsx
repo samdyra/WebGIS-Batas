@@ -6,10 +6,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import Navbar from './shared/components/Navbar/index.tsx';
 import FloatingNavbar from './shared/components/FloatingNavbar/index.tsx';
-
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AdminScreen from './admin/AdminScreen.tsx';
-import LoginScreen from './admin/Screens/LoginScreen.tsx';
+import LoginScreen from './auth/LoginScreen.tsx';
 
 const queryClient = new QueryClient();
 

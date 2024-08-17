@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useSignIn from './hooks/useSignIn';
 
 const LoginScreen: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const { mutate: signIn, isLoading } = useSignIn();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt with:', email, password);
+    signIn(
+      { username, password },
+      {
+        onSuccess: () => {
+          navigate('/admin');
+        },
+      }
+    );
   };
 
   return (
@@ -39,18 +49,18 @@ const LoginScreen: React.FC = () => {
             </a>
           </div>
           <h2 className="text-3xl font-bold mb-2">Login</h2>
-          <p className="text-gray-600 mb-8">Silakan masukkan email dan password</p>
+          <p className="text-gray-600 mb-8">Silakan masukkan username dan password</p>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                Username
               </label>
               <input
-                type="email"
-                id="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                id="username"
+                name="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
@@ -70,13 +80,13 @@ const LoginScreen: React.FC = () => {
               />
             </div>
             <div>
-              <a
+              <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                href="admin"
+                disabled={isLoading}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
               >
-                Masuk
-              </a>
+                {isLoading ? 'Logging in...' : 'Masuk'}
+              </button>
             </div>
           </form>
         </div>
