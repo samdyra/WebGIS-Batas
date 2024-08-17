@@ -1,31 +1,23 @@
-import { useState, lazy, Suspense } from 'react';
-import Sidebar from './Components/shared/Sidebar';
-
-const UploadForm = lazy(() => import('./Screens/UploadDataScreen'));
-const TableView = lazy(() => import('./Screens/SpatialDataScreen'));
-const Documentation = lazy(() => import('./Screens/DocsScreen'));
-const LaporanView = lazy(() => import('./Screens/LaporanScreen'));
-const UserAccessView = lazy(() => import('./Screens/UserAccessScreen'));
-const ArticleView = lazy(() => import('./Screens/ArticleScreen'));
+import { useState } from 'react';
+import Sidebar from './shared/components/Sidebar';
+import ArticleScreen from './Article/ArticleScreen';
+import Documentation from './Docs/DocsScreen';
 
 const AdminScreen = () => {
-  const [message, setMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('upload');
+  const [activeTab, setActiveTab] = useState('documentation');
 
   const renderActiveTab = () => {
     switch (activeTab) {
-      case 'upload':
-        return <UploadForm setMessage={setMessage} />;
       case 'view':
-        return <TableView />;
+        return <></>;
       case 'documentation':
         return <Documentation />;
       case 'laporan':
-        return <LaporanView />;
+        return <></>;
       case 'user':
-        return <UserAccessView />;
+        return <></>;
       case 'articles':
-        return <ArticleView />;
+        return <ArticleScreen />;
       default:
         return null;
     }
@@ -34,20 +26,7 @@ const AdminScreen = () => {
   return (
     <div className="flex h-screen bg-white">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      <div className="flex-1 p-10 bg-gray-100 overflow-auto">
-        <Suspense fallback={<div>Loading...</div>}>{renderActiveTab()}</Suspense>
-
-        {message && (
-          <div
-            className={`mt-4 p-3 rounded ${
-              message.includes('successful') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-            }`}
-          >
-            {message}
-          </div>
-        )}
-      </div>
+      <div className="flex-1 p-10 bg-gray-100 overflow-auto">{renderActiveTab()}</div>
     </div>
   );
 };

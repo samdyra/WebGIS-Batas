@@ -44,7 +44,6 @@ const router = createBrowserRouter([
     path: '/login',
     element: (
       <div className="h-screen overflow-hidden">
-        {/* <Navbar className="border-b-2" /> */}
         <LoginScreen />
       </div>
     ),

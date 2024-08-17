@@ -35,6 +35,10 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
       <div className="flex-grow p-5">
         <h2 className={`text-2xl font-bold mb-5 ${isCollapsed ? 'hidden' : 'block'}`}>Admin Panel</h2>
         <nav className="space-y-2">
+          <button onClick={() => setActiveTab('documentation')} className={buttonClass('documentation')}>
+            <FaBook size={18} className={isCollapsed ? '' : 'mr-2'} />
+            <span className={isCollapsed ? 'hidden' : 'block'}>Documentation</span>
+          </button>
           <button onClick={() => setActiveTab('upload')} className={buttonClass('upload')}>
             <AiOutlineCloudUpload size={22} className={isCollapsed ? '' : 'mr-2'} />
             <span className={isCollapsed ? 'hidden' : 'block'}>Upload Data</span>
@@ -47,17 +51,13 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
             <IoIosWarning size={18} className={isCollapsed ? '' : 'mr-2'} />
             <span className={isCollapsed ? 'hidden' : 'block'}>Data Laporan</span>
           </button>
-          <button onClick={() => setActiveTab('articles')} className={buttonClass('documentation')}>
+          <button onClick={() => setActiveTab('articles')} className={buttonClass('articles')}>
             <MdArticle size={18} className={isCollapsed ? '' : 'mr-2'} />
             <span className={isCollapsed ? 'hidden' : 'block'}>Articles</span>
           </button>
           <button onClick={() => setActiveTab('user')} className={buttonClass('user')}>
             <FaUser size={18} className={isCollapsed ? '' : 'mr-2'} />
             <span className={isCollapsed ? 'hidden' : 'block'}>User Access</span>
-          </button>
-          <button onClick={() => setActiveTab('documentation')} className={buttonClass('documentation')}>
-            <FaBook size={18} className={isCollapsed ? '' : 'mr-2'} />
-            <span className={isCollapsed ? 'hidden' : 'block'}>Documentation</span>
           </button>
         </nav>
       </div>

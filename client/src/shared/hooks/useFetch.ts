@@ -1,28 +1,5 @@
-import axios, { type AxiosError, type AxiosPromise, type AxiosRequestConfig } from 'axios';
+import axios, { type AxiosPromise, type AxiosRequestConfig } from 'axios';
 import useAuthStore from '../../auth/hooks/useAuthStore';
-
-type GeneralResponse<TResponse = unknown> = TResponse;
-
-export type GeneralErrorResponse = AxiosError<{
-  status_code: number;
-  code: string;
-  error: string;
-  message: string;
-}>;
-
-export type GeneralSuccessResponse<TResponse = unknown> = GeneralResponse<{
-  data: TResponse;
-  message: string;
-  status_code: number;
-  success: boolean;
-}>;
-
-export type GeneralSuccessMutationResponse<TResponse = unknown> = GeneralResponse<{
-  data: TResponse;
-  message: string;
-  status_code: number;
-  success: boolean;
-}>;
 
 const instance = axios.create({
   timeout: 1000 * 60 * 5,
@@ -38,16 +15,33 @@ export const fetch = <T>(params: AxiosRequestConfig): AxiosPromise<T> => {
   return instance(params);
 };
 
-export default function useFetch<TResponse = unknown, TArgs = unknown>(fn: (args?: TArgs) => AxiosRequestConfig) {
+type ContentType = 'application/json' | 'multipart/form-data';
+
+export default function useFetch<TResponse = unknown, TArgs = unknown>(
+  fn: (args?: TArgs) => AxiosRequestConfig,
+  contentType: ContentType = 'application/json'
+) {
   const { token } = useAuthStore();
 
   return async (args?: TArgs) => {
     const config = fn(args);
 
+    let headers: Record<string, string> = {
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+
+    if (contentType === 'application/json') {
+      headers['Content-Type'] = 'application/json';
+    }
+    // For multipart/form-data, don't set Content-Type header
+    // axios will set it automatically with the correct boundary
+
     return fetch<TResponse>({
       ...config,
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...config.headers,
+        ...headers,
       },
     }).then((res) => res.data);
   };
