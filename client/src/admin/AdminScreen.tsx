@@ -2,22 +2,27 @@ import { useState } from 'react';
 import Sidebar from './shared/components/Sidebar';
 import ArticleScreen from './Article/ArticleScreen';
 import Documentation from './Docs/DocsScreen';
+import SpatialDataScreen from './SpatialData/SpatialDataScreen';
 
 const AdminScreen = () => {
   const [activeTab, setActiveTab] = useState('documentation');
 
   const renderActiveTab = () => {
     switch (activeTab) {
-      case 'view':
-        return <></>;
       case 'documentation':
         return <Documentation />;
+      case 'data':
+        return <SpatialDataScreen />;
+      case 'layer':
+        return <>layer</>;
+      case 'group':
+        return <>group</>;
       case 'laporan':
-        return <></>;
-      case 'user':
-        return <></>;
+        return <>laporan</>;
       case 'articles':
         return <ArticleScreen />;
+      case 'user':
+        return <>user</>;
       default:
         return null;
     }

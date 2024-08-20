@@ -25,6 +25,8 @@ export function useMutationCreateSpatialData() {
       formData.append('file', data.file);
     }
 
+    console.log(formData);
+
     return {
       url: '/spatial-data',
       method: 'POST',
@@ -81,7 +83,7 @@ export function useMutationDeleteSpatialData() {
 }
 
 // Types
-type SpatialData = {
+export type SpatialData = {
   id: number;
   table_name: string;
   type: string;
@@ -91,7 +93,7 @@ type SpatialData = {
   updated_by: number;
 };
 
-type CreateSpatialDataParams = {
+export type CreateSpatialDataParams = {
   table_name: string;
   type: string;
   file: File;

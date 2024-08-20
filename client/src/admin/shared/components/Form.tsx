@@ -40,6 +40,23 @@ export function GenericForm<T extends FieldValues>({ fields, defaultValues, onSu
       );
     } else if (field.type === 'textarea') {
       return <textarea {...register(field.name, { required: field.required })} className={`${commonClasses} h-32`} />;
+    } else if (field.type === 'file') {
+      return (
+        <input
+          type="file"
+          {...register(field.name, {
+            required: field.required,
+            onChange: (e) => {
+              const files = e.target.files;
+              if (files && files.length > 0) {
+                return files[0];
+              }
+              return null;
+            },
+          })}
+          className={commonClasses}
+        />
+      );
     } else {
       return (
         <input type={field.type} {...register(field.name, { required: field.required })} className={commonClasses} />
@@ -47,8 +64,21 @@ export function GenericForm<T extends FieldValues>({ fields, defaultValues, onSu
     }
   };
 
+  const handleFormSubmit = (data: T) => {
+    // Convert FileList to File for file inputs
+    const processedData = Object.fromEntries(
+      Object.entries(data).map(([key, value]) => {
+        if (value instanceof FileList && value.length > 0) {
+          return [key, value[0]];
+        }
+        return [key, value];
+      })
+    );
+    onSubmit(processedData as T);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       {fields.map((field) => (
         <div key={field.name} className="space-y-2">
           <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
