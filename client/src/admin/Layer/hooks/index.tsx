@@ -67,7 +67,7 @@ export function useMutationDeleteLayer() {
 }
 
 // Types
-type Layer = {
+export type Layer = {
   id: number;
   layer_name: string;
   coordinate: [number, number];
@@ -95,14 +95,15 @@ type LayerResponse = {
   updated_by: number;
 };
 
-type CreateLayerParams = {
+export type CreateLayerParams = {
+  id: number[] | '*';
   spatial_data_id: number;
   layer_name: string;
   coordinate: [number, number];
   color: string;
 };
 
-type UpdateLayerParams = {
+export type UpdateLayerParams = {
   id: number;
   layer_name?: string;
   coordinate?: [number, number];

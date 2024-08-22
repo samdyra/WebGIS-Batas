@@ -31,6 +31,9 @@ export function useMutationCreateSpatialData() {
       url: '/spatial-data',
       method: 'POST',
       data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     };
   }, 'multipart/form-data');
 
