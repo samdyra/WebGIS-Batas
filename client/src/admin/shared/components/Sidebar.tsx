@@ -55,9 +55,9 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
             <LuGroup size={22} className={isCollapsed ? '' : 'mr-2'} />
             <span className={isCollapsed ? 'hidden' : 'block'}>Layer Groupings</span>
           </button>
-          <button onClick={() => setActiveTab('laporan')} className={buttonClass('laporan')}>
+          <button onClick={() => setActiveTab('reports')} className={buttonClass('reports')}>
             <IoIosWarning size={18} className={isCollapsed ? '' : 'mr-2'} />
-            <span className={isCollapsed ? 'hidden' : 'block'}>Laporan Management</span>
+            <span className={isCollapsed ? 'hidden' : 'block'}>Report Management</span>
           </button>
           <button onClick={() => setActiveTab('articles')} className={buttonClass('articles')}>
             <MdArticle size={18} className={isCollapsed ? '' : 'mr-2'} />
