@@ -7,10 +7,14 @@ type Response = {
   message: string;
 };
 
-export default function useMutationDeleteGroup(id: number) {
+type DeleteGroupParam = {
+  id: number;
+};
+
+export default function useMutationDeleteGroup() {
   const queryClient = useQueryClient();
-  const fetch = useFetch<Response>(() => ({
-    url: `/layer-groups/${id}`,
+  const fetch = useFetch<Response, DeleteGroupParam>((param) => ({
+    url: `/layer-groups/${param?.id}`,
     method: 'DELETE',
   }));
 

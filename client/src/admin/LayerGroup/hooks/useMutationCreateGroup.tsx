@@ -7,13 +7,13 @@ type Response = {
   message: string;
 };
 
-type Param = {
+export type CreateGroupParam = {
   group_name: string;
 };
 
 export default function useMutationCreateGroup() {
   const queryClient = useQueryClient();
-  const fetch = useFetch<Response, Param>((data) => ({
+  const fetch = useFetch<Response, CreateGroupParam>((data) => ({
     url: '/layer-groups',
     method: 'POST',
     data,

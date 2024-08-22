@@ -7,14 +7,14 @@ type Response = {
   message: string;
 };
 
-type Param = {
+export type AssignGroupParam = {
   layer_id: number;
   group_id: number;
 };
 
 export default function useMutationAssignGroup() {
   const queryClient = useQueryClient();
-  const fetch = useFetch<Response, Param>((data) => ({
+  const fetch = useFetch<Response, AssignGroupParam>((data) => ({
     url: '/layer-groups/add-layer',
     method: 'POST',
     data,

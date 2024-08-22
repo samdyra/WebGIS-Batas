@@ -4,6 +4,7 @@ import ArticleScreen from './Article/ArticleScreen';
 import Documentation from './Docs/DocsScreen';
 import SpatialDataScreen from './SpatialData/SpatialDataScreen';
 import LayerScreen from './Layer/LayerScreen';
+import LayerGroupScreen from './LayerGroup/LayerGroupScreen';
 
 const AdminScreen = () => {
   const [activeTab, setActiveTab] = useState('documentation');
@@ -17,7 +18,7 @@ const AdminScreen = () => {
       case 'layer':
         return <LayerScreen />;
       case 'group':
-        return <>group</>;
+        return <LayerGroupScreen />;
       case 'laporan':
         return <>laporan</>;
       case 'articles':
