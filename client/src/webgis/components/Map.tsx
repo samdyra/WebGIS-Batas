@@ -1,12 +1,12 @@
 import { useRef, useCallback, useEffect, useMemo } from 'react';
-import Map, { MapRef, Source, Layer } from 'react-map-gl/maplibre';
-import { useQueryLayers } from '../../../admin/Layer/hooks';
+import Map, { MapRef, Source, Layer, MapLayerMouseEvent } from 'react-map-gl/maplibre';
+import { useQueryLayers } from '../../admin/Layer/hooks';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
-import useQueryBaseMap from '../../hooks/useQueryBaseMap';
+import useQueryBaseMap from '../hooks/useQueryBaseMap';
 
-import useIDStore from '../../hooks/useIDStore';
-import useZoomToCoordinate from '../../hooks/useZoomToCoordinate';
+import useIDStore from '../hooks/useIDStore';
+import useZoomToCoordinate from '../hooks/useZoomToCoordinate';
 
 const MapComponent = () => {
   const { baseMap } = useQueryBaseMap();
@@ -26,6 +26,15 @@ const MapComponent = () => {
       });
     }
   }, [coordinate]);
+
+  const handleLayerClick = useCallback((event: MapLayerMouseEvent) => {
+    const clickedFeatures = event.features;
+    if (clickedFeatures && clickedFeatures.length > 0) {
+      const clickedFeature = clickedFeatures[0];
+
+      console.log('Feature properties:', clickedFeature.properties);
+    }
+  }, []);
 
   const memoizedLayers = useMemo(() => {
     return mvtLayers?.map((mvtLayer) => (
@@ -58,6 +67,8 @@ const MapComponent = () => {
       }}
       style={{ width: '100%', height: '100vh' }}
       mapStyle={baseMap}
+      onClick={handleLayerClick}
+      interactiveLayerIds={mvtLayers?.map((layer) => `layer-${layer?.layer?.id}`)}
     >
       {memoizedLayers}
     </Map>

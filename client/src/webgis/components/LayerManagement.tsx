@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useQueryLayerGroup from '../../admin/LayerGroup/hooks/useQueryLayerGroup';
-import { FaEye, FaEyeSlash, FaSearch, FaTable, FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaSearch, FaTable, FaChevronRight } from 'react-icons/fa';
 import useIDStore from '../hooks/useIDStore';
 import useZoomToCoordinate from '../hooks/useZoomToCoordinate';
 import PropViewer from './PropViewer';
