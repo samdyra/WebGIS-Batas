@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useMemo } from 'react';
 import Map, { MapRef, Source, Layer } from 'react-map-gl/maplibre';
 import { useQueryLayers } from '../../../admin/Layer/hooks';
 
@@ -27,6 +27,23 @@ const MapComponent = () => {
     }
   }, [coordinate]);
 
+  const memoizedLayers = useMemo(() => {
+    return mvtLayers?.map((mvtLayer) => (
+      <Source
+        key={mvtLayer?.layer?.id}
+        id={`source-${mvtLayer?.layer?.id}`}
+        type="geojson"
+        data={mvtLayer?.layer?.source?.tiles}
+      >
+        <Layer
+          id={`layer-${mvtLayer?.layer?.id}`}
+          type={mvtLayer?.layer?.type as 'line'}
+          paint={mvtLayer?.layer?.paint}
+        />
+      </Source>
+    ));
+  }, [mvtLayers]);
+
   useEffect(() => {
     handleZoomToCoordinate();
   }, [coordinate]);
@@ -42,11 +59,7 @@ const MapComponent = () => {
       style={{ width: '100%', height: '100vh' }}
       mapStyle={baseMap}
     >
-      {mvtLayers?.map((mvtLayer) => (
-        <Source id={mvtLayer?.layer?.id} type="geojson" data={mvtLayer?.layer?.source?.tiles}>
-          <Layer id={mvtLayer?.layer?.id} type={mvtLayer?.layer?.type as 'line'} paint={mvtLayer?.layer?.paint} />
-        </Source>
-      ))}
+      {memoizedLayers}
     </Map>
   );
 };
