@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import useQueryLayerGroup from '../../admin/LayerGroup/hooks/useQueryLayerGroup';
-import { useZoomToCoordinate } from './Map';
 import { FaEye, FaEyeSlash, FaSearch, FaTable, FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import useIDStore from '../hooks/useIDStore';
+import useZoomToCoordinate from '../hooks/useZoomToCoordinate';
 
 const LayerManagement: React.FC = () => {
   const { data } = useQueryLayerGroup();
-  const { zoomToCoordinate } = useZoomToCoordinate();
   const [expandedGroups, setExpandedGroups] = useState<number[]>([]);
   const { addID, removeID, ids } = useIDStore();
+  const { setCoordinateValue } = useZoomToCoordinate();
 
   const toggleGroup = (groupId: number) => {
     setExpandedGroups((prev) => (prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]));
@@ -23,7 +23,7 @@ const LayerManagement: React.FC = () => {
   };
 
   const handleZoom = (lat: number, lng: number) => {
-    zoomToCoordinate({ lat, lng }, 14);
+    setCoordinateValue(lat, lng);
   };
 
   const handleShowAttributes = (layerId: number) => {
