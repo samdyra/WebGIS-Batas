@@ -11,7 +11,7 @@ interface Props {
 }
 
 const LayerBar = (props: Props) => {
-  const layerWidth = props.size === 'small' ? '250px' : '450px';
+  const layerWidth = props.size === 'small' ? '250px' : '350px';
 
   return (
     <div

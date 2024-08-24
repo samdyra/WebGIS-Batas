@@ -7,6 +7,8 @@ export type LayerGroups = {
   layers: {
     layer_id: number;
     layer_name: string;
+    coordinate: [number, number];
+    color: string;
   }[];
 };
 

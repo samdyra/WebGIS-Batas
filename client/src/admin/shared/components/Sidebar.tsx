@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { AiOutlineCloudUpload, AiOutlineLogout } from 'react-icons/ai';
+import { AiOutlineLogout } from 'react-icons/ai';
 import { LuGroup } from 'react-icons/lu';
 
-import { FaTable, FaBook, FaUser, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaBook, FaUser, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { IoIosWarning } from 'react-icons/io';
 import { FaMap } from 'react-icons/fa';
 import { MdArticle } from 'react-icons/md';
@@ -61,7 +61,7 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
           </button>
           <button onClick={() => setActiveTab('articles')} className={buttonClass('articles')}>
             <MdArticle size={18} className={isCollapsed ? '' : 'mr-2'} />
-            <span className={isCollapsed ? 'hidden' : 'block'}>Articles</span>
+            <span className={isCollapsed ? 'hidden' : 'block'}>Article Management</span>
           </button>
           <button onClick={() => setActiveTab('user')} className={buttonClass('user')}>
             <FaUser size={18} className={isCollapsed ? '' : 'mr-2'} />
