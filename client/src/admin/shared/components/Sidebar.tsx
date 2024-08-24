@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { AiOutlineCloudUpload, AiOutlineLogout } from 'react-icons/ai';
+import { AiOutlineLogout } from 'react-icons/ai';
 import { LuGroup } from 'react-icons/lu';
 
-import { FaTable, FaBook, FaUser, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaBook, FaUser, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { IoIosWarning } from 'react-icons/io';
 import { FaMap } from 'react-icons/fa';
 import { MdArticle } from 'react-icons/md';

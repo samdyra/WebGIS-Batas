@@ -3,7 +3,8 @@ import useQueryLayerGroup from '../../admin/LayerGroup/hooks/useQueryLayerGroup'
 import { FaEye, FaEyeSlash, FaSearch, FaTable, FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import useIDStore from '../hooks/useIDStore';
 import useZoomToCoordinate from '../hooks/useZoomToCoordinate';
-import PropViewer from './PropViewer'; // Make sure this path is correct
+import PropViewer from './PropViewer';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const LayerManagement: React.FC = () => {
   const { data } = useQueryLayerGroup();
@@ -11,7 +12,6 @@ const LayerManagement: React.FC = () => {
   const { addID, removeID, ids } = useIDStore();
   const { setCoordinateValue } = useZoomToCoordinate();
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedLayerId, setSelectedLayerId] = useState<number | null>(null);
   const [selectedTableName, setSelectedTableName] = useState<string>('');
 
   const toggleGroup = (groupId: number) => {
@@ -30,68 +30,78 @@ const LayerManagement: React.FC = () => {
     setCoordinateValue(lat, lng);
   };
 
-  const handleShowAttributes = (layerId: number, tableName: string) => {
-    setSelectedLayerId(layerId);
+  const handleShowAttributes = (tableName: string) => {
     setSelectedTableName(tableName);
     setModalOpen(true);
   };
 
   return (
-    <>
-      <main className="border-2 mx-sm rounded-md h-full mb-2 overflow-auto">
-        {data?.map((layerGroup) => (
-          <div key={layerGroup.group_id} className="border-b-2 border-gray-200 last:border-b-0">
-            <div
-              className="flex items-center justify-between p-sm cursor-pointer hover:bg-gray-100"
-              onClick={() => toggleGroup(layerGroup.group_id)}
+    <div className="max-w-md bg-white rounded-lg overflow-hidden">
+      {data?.map((layerGroup) => (
+        <div key={layerGroup.group_id} className="border-b border-gray-200 ">
+          <button
+            className="flex items-center justify-between w-full p-3 text-sm font-medium hover:bg-gray-50 focus:outline-none"
+            onClick={() => toggleGroup(layerGroup.group_id)}
+          >
+            <span>{layerGroup.group_name}</span>
+            <motion.div
+              initial={false}
+              animate={{ rotate: expandedGroups.includes(layerGroup.group_id) ? 90 : 0 }}
+              transition={{ duration: 0.1 }}
             >
-              <h3 className="text-lg font-semibold">{layerGroup.group_name}</h3>
-              {expandedGroups.includes(layerGroup.group_id) ? <FaChevronDown /> : <FaChevronRight />}
-            </div>
+              <FaChevronRight className="h-4 w-4" />
+            </motion.div>
+          </button>
+          <AnimatePresence>
             {expandedGroups.includes(layerGroup.group_id) && (
-              <ul className="px-sm pb-sm">
+              <motion.ul
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.1 }}
+                className="px-3 pb-2 overflow-hidden"
+              >
                 {layerGroup.layers.map((layer) => (
                   <li key={layer.layer_id} className="mb-2 last:mb-0">
-                    <div className="flex items-center justify-between border-2 p-2 rounded">
+                    <div className="flex items-center justify-between border rounded p-2 text-xs">
                       <div className="flex flex-col">
                         <span className="font-medium">{layer.layer_name}</span>
-                        <div className="flex mt-2 space-x-2">
+                        <div className="flex mt-1 space-x-1">
                           <button
+                            className="p-1 hover:bg-gray-100 rounded focus:outline-none"
                             onClick={() => handleToggleVisibility(layer.layer_id)}
-                            className="p-1 hover:bg-gray-200 rounded"
                           >
-                            {ids.includes(layer.layer_id) ? <FaEyeSlash /> : <FaEye />}
+                            {ids.includes(layer.layer_id) ? (
+                              <FaEyeSlash className="h-3 w-3" />
+                            ) : (
+                              <FaEye className="h-3 w-3" />
+                            )}
                           </button>
                           <button
+                            className="p-1 hover:bg-gray-100 rounded focus:outline-none"
                             onClick={() => handleZoom(layer.coordinate[1], layer.coordinate[0])}
-                            className="p-1 hover:bg-gray-200 rounded"
                           >
-                            <FaSearch />
+                            <FaSearch className="h-3 w-3" />
                           </button>
                           <button
-                            onClick={() => handleShowAttributes(layer.layer_id, convertToSnakeCase(layer.layer_name))}
-                            className="p-1 hover:bg-gray-200 rounded"
+                            className="p-1 hover:bg-gray-100 rounded focus:outline-none"
+                            onClick={() => handleShowAttributes(convertToSnakeCase(layer.layer_name))}
                           >
-                            <FaTable />
+                            <FaTable className="h-3 w-3" />
                           </button>
                         </div>
                       </div>
-                      <div className="w-[2px] h-14" style={{ backgroundColor: layer.color }} />
+                      <div className="w-1 h-10 rounded" style={{ backgroundColor: layer.color }} />
                     </div>
                   </li>
                 ))}
-              </ul>
+              </motion.ul>
             )}
-          </div>
-        ))}
-      </main>
-      <PropViewer
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        layerId={selectedLayerId}
-        tableName={selectedTableName}
-      />
-    </>
+          </AnimatePresence>
+        </div>
+      ))}
+      <PropViewer isOpen={modalOpen} onClose={() => setModalOpen(false)} tableName={selectedTableName} />
+    </div>
   );
 };
 

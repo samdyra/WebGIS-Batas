@@ -13,14 +13,20 @@ interface GeoJSONFeature {
   };
 }
 
+function convertFromSnakeCase(str: string): string {
+  return str
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
 interface PropViewerProps {
   isOpen: boolean;
   onClose: () => void;
-  layerId: number | null;
   tableName: string;
 }
 
-const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, layerId, tableName }) => {
+const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, tableName }) => {
   const [features, setFeatures] = useState<GeoJSONFeature[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +61,7 @@ const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, layerId, table
   const columns = features.length > 0 ? Object.keys(features[0].properties) : [];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Layer ${layerId} Properties (${tableName})`}>
+    <Modal isOpen={isOpen} onClose={onClose} title={`Table Atribut ${convertFromSnakeCase(tableName)}`}>
       {isLoading ? (
         <div className="flex justify-center items-center h-48">
           <FaSpinner className="animate-spin text-4xl text-blue-500" />

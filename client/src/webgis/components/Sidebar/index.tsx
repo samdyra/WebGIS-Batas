@@ -124,7 +124,7 @@ const SideBar = (props: IProps) => {
       </div>
       <div className={`border-r-2 border-t-2 ${s.wrapper2 ?? ''}`} style={wrapper2Style}>
         {isOpen && (
-          <h1 className="mb-2 pl-4 text-2xl font-bold text-main-green ">{`${props?.menuItems?.[menuIndex]?.label}`}</h1>
+          <h1 className="mb-2 pl-4 text-xl font-bold text-main-green ">{`${props?.menuItems?.[menuIndex]?.label}`}</h1>
         )}
 
         {isOpen ? props.children : null}
