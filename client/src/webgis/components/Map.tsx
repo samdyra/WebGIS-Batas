@@ -7,6 +7,17 @@ import useQueryBaseMap from '../hooks/useQueryBaseMap';
 
 import useIDStore from '../hooks/useIDStore';
 import useZoomToCoordinate from '../hooks/useZoomToCoordinate';
+import useFeatureData from '../hooks/useGetFeature';
+
+function convertLayerIdToName(layerId: string): string {
+  // Remove the "source-" prefix
+  const withoutPrefix = layerId.replace(/^source-/, '');
+
+  // Replace underscores with spaces
+  const withSpaces = withoutPrefix.replace(/_/g, ' ');
+
+  return withSpaces;
+}
 
 const MapComponent = () => {
   const { baseMap } = useQueryBaseMap();
@@ -14,6 +25,7 @@ const MapComponent = () => {
   const { ids } = useIDStore();
   const { data: mvtLayers } = useQueryLayers(ids);
   const { coordinate } = useZoomToCoordinate();
+  const { setFeatureData } = useFeatureData();
 
   const handleZoomToCoordinate = useCallback(() => {
     if (coordinate.length) {
@@ -27,14 +39,18 @@ const MapComponent = () => {
     }
   }, [coordinate]);
 
-  const handleLayerClick = useCallback((event: MapLayerMouseEvent) => {
-    const clickedFeatures = event.features;
-    if (clickedFeatures && clickedFeatures.length > 0) {
-      const clickedFeature = clickedFeatures[0];
+  const handleLayerClick = useCallback(
+    (event: MapLayerMouseEvent) => {
+      const clickedFeatures = event.features;
+      if (clickedFeatures && clickedFeatures.length > 0) {
+        const clickedFeature = clickedFeatures[0];
+        console.log(clickedFeature);
 
-      console.log('Feature properties:', clickedFeature.properties);
-    }
-  }, []);
+        setFeatureData(convertLayerIdToName(clickedFeature.layer.source), clickedFeature.properties);
+      }
+    },
+    [setFeatureData]
+  );
 
   const memoizedLayers = useMemo(() => {
     return mvtLayers?.map((mvtLayer) => (
@@ -55,7 +71,7 @@ const MapComponent = () => {
 
   useEffect(() => {
     handleZoomToCoordinate();
-  }, [coordinate]);
+  }, [coordinate, handleZoomToCoordinate]);
 
   return (
     <Map
