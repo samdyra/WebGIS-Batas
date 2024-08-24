@@ -61,7 +61,7 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
           </button>
           <button onClick={() => setActiveTab('articles')} className={buttonClass('articles')}>
             <MdArticle size={18} className={isCollapsed ? '' : 'mr-2'} />
-            <span className={isCollapsed ? 'hidden' : 'block'}>Articles</span>
+            <span className={isCollapsed ? 'hidden' : 'block'}>Article Management</span>
           </button>
           <button onClick={() => setActiveTab('user')} className={buttonClass('user')}>
             <FaUser size={18} className={isCollapsed ? '' : 'mr-2'} />
