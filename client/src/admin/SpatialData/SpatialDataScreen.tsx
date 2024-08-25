@@ -11,6 +11,22 @@ import {
   CreateSpatialDataParams,
 } from './hooks';
 import { ColumnDef } from '@tanstack/react-table';
+import Select from 'react-select';
+import { Controller } from 'react-hook-form';
+
+function formatString(input: string) {
+  // First, trim any leading or trailing whitespace
+  let trimmed = input.trim();
+
+  // Split the string into words
+  let words = trimmed.split(/\s+/);
+
+  // Capitalize the first letter of each word
+  let capitalizedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+
+  // Join the words with underscores
+  return capitalizedWords.join('_');
+}
 
 export default function SpatialDataScreen() {
   const { data: spatialData, isLoading, error } = useQuerySpatialData();
@@ -48,6 +64,12 @@ export default function SpatialDataScreen() {
     },
   ];
 
+  const typeOptions = [
+    { value: 'LINESTRING', label: 'LINESTRING' },
+    { value: 'POLYGON', label: 'POLYGON' },
+    { value: 'POINT', label: 'POINT' },
+  ];
+
   const formFields: FieldConfig<CreateSpatialDataParams>[] = [
     {
       name: 'table_name',
@@ -59,9 +81,29 @@ export default function SpatialDataScreen() {
     {
       name: 'type',
       label: 'Type',
-      type: 'text',
+      type: 'select',
       required: true,
-      description: 'Enter the type of spatial data.',
+      description: 'Select the type of spatial data.',
+      component: ({ control }) => (
+        <Controller
+          name="type"
+          control={control}
+          rules={{ required: 'Type is required' }}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={typeOptions}
+                isSearchable
+                placeholder="Select spatial data type..."
+                {...field}
+                onChange={(option: any) => field.onChange(option.value)}
+                value={typeOptions.find((option) => option.value === field.value)}
+              />
+              {error && <p className="mt-2 text-sm text-red-600">{error.message}</p>}
+            </>
+          )}
+        />
+      ),
     },
     {
       name: 'file',
@@ -71,7 +113,6 @@ export default function SpatialDataScreen() {
       description: 'Upload the spatial data file.',
     },
   ];
-
   const handleCreate = () => {
     setIsCreateModalOpen(true);
   };
@@ -88,8 +129,7 @@ export default function SpatialDataScreen() {
   };
 
   const handleCreateSubmit = (data: CreateSpatialDataParams) => {
-    console.log(data);
-    createSpatialData(data);
+    createSpatialData({ ...data, table_name: formatString(data.table_name) });
     setIsCreateModalOpen(false);
   };
 
