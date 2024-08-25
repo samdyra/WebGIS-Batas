@@ -1,3 +1,4 @@
+import React from 'react';
 import { useForm, FieldValues, Path, UseFormRegister, SubmitHandler, DefaultValues } from 'react-hook-form';
 
 export interface FieldConfig<T extends FieldValues> {
@@ -7,6 +8,8 @@ export interface FieldConfig<T extends FieldValues> {
   required?: boolean;
   options?: { value: string; label: string }[];
   description?: string;
+  component?: React.ComponentType<any>;
+  validation?: Record<string, any>;
 }
 
 interface GenericFormProps<T extends FieldValues> {
@@ -19,6 +22,7 @@ export function GenericForm<T extends FieldValues>({ fields, defaultValues, onSu
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<T>({
     defaultValues: defaultValues,
@@ -28,9 +32,14 @@ export function GenericForm<T extends FieldValues>({ fields, defaultValues, onSu
     const commonClasses =
       'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50';
 
+    if (field.component) {
+      const CustomComponent = field.component;
+      return <CustomComponent control={control} />;
+    }
+
     if (field.type === 'select') {
       return (
-        <select {...register(field.name, { required: field.required })} className={commonClasses}>
+        <select {...register(field.name, { required: field.required, ...field.validation })} className={commonClasses}>
           {field.options?.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -39,13 +48,19 @@ export function GenericForm<T extends FieldValues>({ fields, defaultValues, onSu
         </select>
       );
     } else if (field.type === 'textarea') {
-      return <textarea {...register(field.name, { required: field.required })} className={`${commonClasses} h-32`} />;
+      return (
+        <textarea
+          {...register(field.name, { required: field.required, ...field.validation })}
+          className={`${commonClasses} h-32`}
+        />
+      );
     } else if (field.type === 'file') {
       return (
         <input
           type="file"
           {...register(field.name, {
             required: field.required,
+            ...field.validation,
             onChange: (e) => {
               const files = e.target.files;
               if (files && files.length > 0) {
@@ -59,7 +74,11 @@ export function GenericForm<T extends FieldValues>({ fields, defaultValues, onSu
       );
     } else {
       return (
-        <input type={field.type} {...register(field.name, { required: field.required })} className={commonClasses} />
+        <input
+          type={field.type}
+          {...register(field.name, { required: field.required, ...field.validation })}
+          className={commonClasses}
+        />
       );
     }
   };
@@ -87,7 +106,9 @@ export function GenericForm<T extends FieldValues>({ fields, defaultValues, onSu
           </label>
           {renderField(field, register)}
           {field.description && <p className="mt-2 text-sm text-gray-500">{field.description}</p>}
-          {errors[field.name] && <p className="mt-2 text-sm text-red-600">This field is required</p>}
+          {errors[field.name] && !field.component && (
+            <p className="mt-2 text-sm text-red-600">{errors[field.name]?.message as string}</p>
+          )}
         </div>
       ))}
       <div className="pt-5">

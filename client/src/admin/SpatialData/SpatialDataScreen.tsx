@@ -51,7 +51,7 @@ export default function SpatialDataScreen() {
   const formFields: FieldConfig<CreateSpatialDataParams>[] = [
     {
       name: 'table_name',
-      label: 'Table Name',
+      label: 'Data name',
       type: 'text',
       required: true,
       description: 'Enter the name of the spatial data table.',

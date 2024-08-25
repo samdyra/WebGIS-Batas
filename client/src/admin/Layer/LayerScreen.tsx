@@ -1,13 +1,19 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { GenericTable } from '../shared/components/GenericTable';
 import { Modal } from '../shared/components/Modal';
 import { GenericForm, FieldConfig } from '../shared/components/Form';
 import { useQueryLayers, useMutationCreateLayer, useMutationUpdateLayer, useMutationDeleteLayer } from './hooks';
 import { ColumnDef } from '@tanstack/react-table';
 import { Layer, CreateLayerParams, UpdateLayerParams } from './hooks';
+import { Controller } from 'react-hook-form';
+
+import { useQuerySpatialData } from '../SpatialData/hooks';
+import { SpatialData } from '../SpatialData/hooks';
+import Select from 'react-select';
 
 export default function LayerScreen() {
   const { data: layers } = useQueryLayers();
+  const { data: spatialData } = useQuerySpatialData();
   const { mutate: createLayer } = useMutationCreateLayer();
   const { mutate: updateLayer } = useMutationUpdateLayer();
   const { mutate: deleteLayer } = useMutationDeleteLayer();
@@ -41,7 +47,6 @@ export default function LayerScreen() {
           <div
             style={{
               backgroundColor: getValue() as string,
-
               border: '1px solid #000',
               width: '25px',
               height: '25px',
@@ -53,15 +58,44 @@ export default function LayerScreen() {
     },
   ];
 
+  const spatialDataOptions = useMemo(
+    () =>
+      spatialData?.map((item: SpatialData) => ({
+        value: item.id.toString(),
+        label: item.table_name,
+      })) || [],
+    [spatialData]
+  );
+
   const formFieldsCreate: FieldConfig<CreateLayerParams>[] = [
     {
       name: 'id',
-      label: 'ID',
-      type: 'text',
+      label: 'Data Source',
+      type: 'select',
       required: true,
-      description: 'Enter the ID of the layer.',
+      description: 'Select the data source for the layer.',
+      options: spatialDataOptions,
+      component: ({ control }) => (
+        <Controller
+          name="id"
+          control={control}
+          rules={{ required: 'Data Source is required' }}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={spatialDataOptions}
+                isSearchable
+                placeholder="Search and select data source..."
+                {...field}
+                onChange={(option: any) => field.onChange(option.value)}
+                value={spatialDataOptions.find((option) => option.value === field.value)}
+              />
+              {error && <p className="mt-2 text-sm text-red-600">{error.message}</p>}
+            </>
+          )}
+        />
+      ),
     },
-
     {
       name: 'layer_name',
       label: 'Layer Name',
@@ -123,7 +157,7 @@ export default function LayerScreen() {
 
   const handleCreateSubmit = (data: Partial<CreateLayerParams>) => {
     const coordinateArray = (data.coordinate as unknown as string).split(',').map(Number);
-    console.log(data);
+
     createLayer({
       ...data,
       spatial_data_id: Number(data.id),
