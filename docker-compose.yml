@@ -12,9 +12,9 @@ services:
       - server
 
   server:
-    image: dwiputrasam/server
+    image: dwiputrasam/api
     build:
-      context: ./server
+      context: ./api
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
@@ -22,18 +22,3 @@ services:
       - ./server/.env
     depends_on:
       - database
-
-  database:
-    image: dwiputrasam/database
-    build:
-      context: ./database
-      dockerfile: Dockerfile
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: dwisam001
-      POSTGRES_DB: postgres
-    volumes:
-      - ./database/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
-      - ./database/seed_data.sql:/docker-entrypoint-initdb.d/seed_data.sql
