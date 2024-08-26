@@ -17,11 +17,22 @@ import (
 	"github.com/samdyra/go-geo/internal/config"
 	"github.com/samdyra/go-geo/internal/database"
 	"github.com/samdyra/go-geo/internal/middleware"
+	"github.com/samdyra/go-geo/internal/utils/minio"
 )
 
 func main() {
 	cfg := config.Load()
 	db := database.NewDB(cfg)
+	err := minio.InitMinioClient(
+		"localhost:9000",
+		"RXMI041CuOZZi9ttrbaT",
+		"gx3Sb7N9nsFbrLUaSpKogHCv9WrN8xYbKGWDyvbW",
+		"bucket",
+	)
+	
+	if err != nil {
+		log.Fatalf("Failed to initialize MinIO client: %v", err)
+	}
 	
 	authService := user.NewAuthService(db)
 	authHandler := user.NewHandler(authService)

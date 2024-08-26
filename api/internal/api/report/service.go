@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/samdyra/go-geo/internal/utils/errors"
+	"github.com/samdyra/go-geo/internal/utils/minio"
 )
 
 type ReportService struct {
@@ -39,17 +40,24 @@ func (s *ReportService) GetReportByID(id int64) (*Report, error) {
 }
 
 func (s *ReportService) CreateReport(input CreateReportInput) (*Report, error) {
+    minioClient := minio.GetMinioClient()
+    dataURL, err := minioClient.UploadFile(input.DataFile, input.FileExtension)
+    if err != nil {
+        log.Printf("Error uploading file to MinIO: %v", err)
+        return nil, errors.ErrInternalServer
+    }
+
     report := &Report{
         ReporterName: input.ReporterName,
         Email:        input.Email,
         Description:  input.Description,
-        DataURL:      input.DataURL,
+        DataURL:      &dataURL,
         CreatedAt:    time.Now(),
     }
 
     query := `INSERT INTO report (reporter_name, email, description, data_url, created_at) 
               VALUES ($1, $2, $3, $4, $5) RETURNING id`
-    err := s.db.QueryRow(query, report.ReporterName, report.Email, report.Description, report.DataURL, report.CreatedAt).
+    err = s.db.QueryRow(query, report.ReporterName, report.Email, report.Description, report.DataURL, report.CreatedAt).
         Scan(&report.ID)
     if err != nil {
         log.Printf("Error creating report: %v", err)
@@ -74,8 +82,14 @@ func (s *ReportService) UpdateReport(id int64, input UpdateReportInput) (*Report
 	if input.Description != nil {
 		report.Description = *input.Description
 	}
-	if input.DataURL != nil {
-		report.DataURL = input.DataURL
+	if input.DataFile != nil {
+		minioClient := minio.GetMinioClient()
+		dataURL, err := minioClient.UploadFile(*input.DataFile, *input.FileExtension)
+		if err != nil {
+			log.Printf("Error uploading file to MinIO: %v", err)
+			return nil, errors.ErrInternalServer
+		}
+		report.DataURL = &dataURL
 	}
 
 	query := `UPDATE report SET reporter_name = $1, email = $2, description = $3, data_url = $4 WHERE id = $5`
