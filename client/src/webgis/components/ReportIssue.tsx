@@ -1,15 +1,60 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useMutationCreateReport } from '../../admin/Reports/hooks';
 
 const ReportIssue: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [description, setDescription] = useState('');
-  const [supportingData, setSupportingData] = useState<File | null>(null);
+  const [supportingData, setSupportingData] = useState<string | null>(null);
+  const [fileExtension, setFileExtension] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const createReportMutation = useMutationCreateReport();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+      const extension = file.name.split('.').pop();
+      setFileExtension(extension || null);
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String = event.target?.result as string;
+        const strippedBase64 = base64String.substring(base64String.indexOf(',') + 1);
+        setSupportingData(strippedBase64);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log({ name, email, description, supportingData });
+
+    try {
+      const reportData = {
+        reporter_name: name,
+        email,
+        description,
+        data_file: supportingData ?? '',
+        file_extension: fileExtension ?? '',
+      };
+
+      await createReportMutation.mutateAsync(reportData);
+
+      // Reset form after successful submission
+      setName('');
+      setEmail('');
+      setDescription('');
+      setSupportingData(null);
+      setFileExtension(null);
+      setFileName(null);
+
+      alert('Report submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      alert('Failed to submit report. Please try again.');
+    }
   };
 
   return (
@@ -61,16 +106,18 @@ const ReportIssue: React.FC = () => {
           <input
             id="supportingData"
             type="file"
-            onChange={(e) => setSupportingData(e.target.files ? e.target.files[0] : null)}
+            onChange={handleFileChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
+          {fileName && <p className="mt-2 text-sm text-gray-600">File selected: {fileName}</p>}
         </div>
         <div className="flex items-center justify-between">
           <button
             type="submit"
             className="bg-main-green hover:bg-main-green-dark text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            disabled={createReportMutation.isLoading}
           >
-            Submit
+            {createReportMutation.isLoading ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </form>

@@ -40,7 +40,6 @@ export function useMutationCreateReport() {
   });
 }
 
-// Hook for updating an existing report
 export function useMutationUpdateReport() {
   const queryClient = useQueryClient();
   const fetch = useFetch<Report, UpdateReportParams>((data) => ({
@@ -50,7 +49,8 @@ export function useMutationUpdateReport() {
       reporter_name: data?.reporter_name,
       email: data?.email,
       description: data?.description,
-      data_url: data?.data_url,
+      data_file: data?.data_file,
+      file_extension: data?.file_extension,
     },
   }));
 
@@ -90,7 +90,8 @@ export type CreateReportParams = {
   reporter_name: string;
   email: string;
   description: string;
-  data_url?: string;
+  data_file?: string;
+  file_extension?: string;
 };
 
 export type UpdateReportParams = {
@@ -98,7 +99,8 @@ export type UpdateReportParams = {
   reporter_name?: string;
   email?: string;
   description?: string;
-  data_url?: string;
+  data_file?: string;
+  file_extension?: string;
 };
 
 type DeleteReportParams = {
