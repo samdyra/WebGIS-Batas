@@ -99,26 +99,28 @@ export default function ReportScreen() {
     }
   };
 
-  const handleCreateSubmit = (data: Partial<Report>) => {
+  const handleCreateSubmit = (data: Partial<CreateReportParams>) => {
     // Ensure data_url is undefined if it's an empty string
     const createData: CreateReportParams = {
       reporter_name: data.reporter_name || '',
       email: data.email || '',
       description: data.description || '',
-      data_url: data.data_url && data.data_url !== '' ? data.data_url : undefined,
+      data_file: data.data_file,
+      file_extension: data.file_extension,
     };
     createReport(createData);
     setIsCreateModalOpen(false);
   };
 
-  const handleEditSubmit = (data: Partial<Report>) => {
+  const handleEditSubmit = (data: Partial<CreateReportParams>) => {
     if (editingReport) {
       const updateData: UpdateReportParams = {
         id: editingReport.id,
         reporter_name: data.reporter_name,
         email: data.email,
         description: data.description,
-        data_url: data.data_url === null ? undefined : data.data_url,
+        data_file: data.data_file,
+        file_extension: data.file_extension,
       };
       updateReport(updateData);
     }
@@ -136,17 +138,17 @@ export default function ReportScreen() {
         onDelete={handleDelete}
       />
 
-      <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create New Report">
+      {/* <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create New Report">
         <GenericForm<Report> fields={formFields} onSubmit={handleCreateSubmit} />
-      </Modal>
-
+      </Modal> */}
+      {/* 
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit Report">
         <GenericForm<Report>
           fields={formFields}
           defaultValues={editingReport || undefined}
           onSubmit={handleEditSubmit}
         />
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

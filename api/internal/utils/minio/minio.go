@@ -67,3 +67,12 @@ func (m *MinioClient) UploadFile(base64Data, fileExtension string) (string, erro
 	// Generate and return the URL
 	return fmt.Sprintf("http://%s/%s/%s", m.client.EndpointURL().Host, m.bucket, fileName), nil
 }
+
+
+func (m *MinioClient) DeleteFile(objectName string) error {
+	err := m.client.RemoveObject(context.Background(), m.bucket, objectName, minio.RemoveObjectOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to delete object from MinIO: %w", err)
+	}
+	return nil
+}

@@ -3,6 +3,7 @@ package report
 import (
 	"database/sql"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -102,15 +103,34 @@ func (s *ReportService) UpdateReport(id int64, input UpdateReportInput) (*Report
 }
 
 func (s *ReportService) DeleteReport(id int64) error {
-	_, err := s.GetReportByID(id)
+	// First, get the report to retrieve the DataURL
+	report, err := s.GetReportByID(id)
 	if err != nil {
 		return err
 	}
 
+	// Delete the file from MinIO if DataURL exists
+	if report.DataURL != nil && *report.DataURL != "" {
+		minioClient := minio.GetMinioClient()
+		objectName := extractObjectNameFromURL(*report.DataURL)
+		err = minioClient.DeleteFile(objectName)
+		if err != nil {
+			log.Printf("Error deleting file from MinIO: %v", err)
+
+			return errors.ErrInternalServer
+		}
+	}
+
+	// Delete the report from the database
 	_, err = s.db.Exec("DELETE FROM report WHERE id = $1", id)
 	if err != nil {
 		return errors.ErrInternalServer
 	}
 
 	return nil
+}
+
+func extractObjectNameFromURL(url string) string {
+	parts := strings.Split(url, "/")
+	return parts[len(parts)-1]
 }
