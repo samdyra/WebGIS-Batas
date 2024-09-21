@@ -1,23 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Modal } from '../../admin/shared/components/Modal';
 import { FaSpinner } from 'react-icons/fa'; // For loading spinner
-
-interface GeoJSONFeature {
-  type: string;
-  properties: {
-    [key: string]: any;
-  };
-  geometry: {
-    type: string;
-    coordinates: number[] | number[][] | number[][][];
-  };
-}
+import { usePropData } from '../../shared/hooks/usePropData';
 
 function convertFromSnakeCase(str: string): string {
   return str
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+    ?.split('_')
+    ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    ?.join(' ');
 }
 
 interface PropViewerProps {
@@ -27,38 +17,9 @@ interface PropViewerProps {
 }
 
 const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, tableName }) => {
-  const [features, setFeatures] = useState<GeoJSONFeature[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data, error, isLoading } = usePropData(tableName);
 
-  useEffect(() => {
-    if (isOpen && tableName) {
-      fetchGeoJSONData(tableName);
-    }
-  }, [isOpen, tableName]);
-
-  const fetchGeoJSONData = async (tableName: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`http://localhost:8080/geojson/${tableName}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch GeoJSON data');
-      }
-      const data = await response.json();
-      if (data.type === 'FeatureCollection' && Array.isArray(data.features)) {
-        setFeatures(data.features);
-      } else {
-        throw new Error('Invalid GeoJSON structure');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const columns = features.length > 0 ? Object.keys(features[0].properties) : [];
+  const columns = data?.features?.length ?? 0 > 0 ? Object.keys(data?.features?.[0]?.properties ?? []) : [];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={`Table Atribut ${convertFromSnakeCase(tableName)}`}>
@@ -67,7 +28,7 @@ const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, tableName }) =
           <FaSpinner className="animate-spin text-4xl text-blue-500" />
         </div>
       ) : error ? (
-        <p className="text-red-500 text-center">{error}</p>
+        <p className="text-red-500 text-center">Something Went Wrong</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border-collapse">
@@ -84,7 +45,7 @@ const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, tableName }) =
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {features.map((feature, index) => (
+              {data?.features?.map((feature, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   {columns.map((column) => (
                     <td

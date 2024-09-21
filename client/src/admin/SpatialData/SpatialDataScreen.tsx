@@ -13,18 +13,12 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import Select from 'react-select';
 import { Controller } from 'react-hook-form';
+import shp from 'shpjs';
 
 function formatString(input: string) {
-  // First, trim any leading or trailing whitespace
   let trimmed = input.trim();
-
-  // Split the string into words
   let words = trimmed.split(/\s+/);
-
-  // Capitalize the first letter of each word
   let capitalizedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-
-  // Join the words with underscores
   return capitalizedWords.join('_');
 }
 
@@ -37,31 +31,17 @@ export default function SpatialDataScreen() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingSpatialData, setEditingSpatialData] = useState<SpatialData | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>An error occurred</div>;
 
   const columns: ColumnDef<SpatialData>[] = [
-    {
-      header: 'ID',
-      accessorKey: 'id',
-    },
-    {
-      header: 'Table Name',
-      accessorKey: 'table_name',
-    },
-    {
-      header: 'Type',
-      accessorKey: 'type',
-    },
-    {
-      header: 'Created At',
-      accessorKey: 'created_at',
-    },
-    {
-      header: 'Updated At',
-      accessorKey: 'updated_at',
-    },
+    { header: 'ID', accessorKey: 'id' },
+    { header: 'Table Name', accessorKey: 'table_name' },
+    { header: 'Type', accessorKey: 'type' },
+    { header: 'Created At', accessorKey: 'created_at' },
+    { header: 'Updated At', accessorKey: 'updated_at' },
   ];
 
   const typeOptions = [
@@ -69,6 +49,31 @@ export default function SpatialDataScreen() {
     { value: 'POLYGON', label: 'POLYGON' },
     { value: 'POINT', label: 'POINT' },
   ];
+
+  const handleFileUpload = async (file: File): Promise<File> => {
+    try {
+      let geoJsonContent: any;
+
+      if (file.name.endsWith('.geojson')) {
+        // If it's already a GeoJSON file, we can return it as is
+        return file;
+      } else if (file.name.endsWith('.zip')) {
+        // If it's a zip file (assumed to be a Shapefile), we need to convert it to GeoJSON
+        const arrayBuffer = await file.arrayBuffer();
+        geoJsonContent = await shp(arrayBuffer);
+      } else {
+        throw new Error('Unsupported file type. Please upload a GeoJSON or zipped Shapefile.');
+      }
+
+      // Convert the GeoJSON content to a File object
+      const geoJsonBlob = new Blob([JSON.stringify(geoJsonContent)], { type: 'application/geo+json' });
+      return new File([geoJsonBlob], file.name.replace('.zip', '.geojson'), { type: 'application/geo+json' });
+    } catch (error) {
+      console.error('Error processing file:', error);
+      setUploadError(error instanceof Error ? error.message : 'An error occurred while processing the file.');
+      throw error;
+    }
+  };
 
   const formFields: FieldConfig<CreateSpatialDataParams>[] = [
     {
@@ -110,16 +115,19 @@ export default function SpatialDataScreen() {
       label: 'File',
       type: 'file',
       required: true,
-      description: 'Upload the spatial data file.',
+      description: 'Upload the spatial data file (GeoJSON or zipped Shapefile).',
     },
   ];
+
   const handleCreate = () => {
     setIsCreateModalOpen(true);
+    setUploadError(null);
   };
 
   const handleEdit = (spatialData: SpatialData) => {
     setEditingSpatialData(spatialData);
     setIsEditModalOpen(true);
+    setUploadError(null);
   };
 
   const handleDelete = (spatialData: SpatialData) => {
@@ -128,21 +136,35 @@ export default function SpatialDataScreen() {
     }
   };
 
-  const handleCreateSubmit = (data: CreateSpatialDataParams) => {
-    createSpatialData({ ...data, table_name: formatString(data.table_name) });
-    setIsCreateModalOpen(false);
+  const handleCreateSubmit = async (data: CreateSpatialDataParams) => {
+    try {
+      const geoJsonFile = await handleFileUpload(data.file as File);
+      createSpatialData({
+        ...data,
+        table_name: formatString(data.table_name),
+        file: geoJsonFile,
+      });
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      // Error is already set in handleFileUpload
+    }
   };
 
-  const handleEditSubmit = (data: Partial<CreateSpatialDataParams>) => {
+  const handleEditSubmit = async (data: Partial<CreateSpatialDataParams>) => {
     if (editingSpatialData) {
-      updateSpatialData({
-        current_table_name: editingSpatialData.table_name,
-        new_table_name: data.table_name,
-        file: data.file as File,
-      });
+      try {
+        const geoJsonFile = data.file ? await handleFileUpload(data.file as File) : undefined;
+        updateSpatialData({
+          current_table_name: editingSpatialData.table_name,
+          new_table_name: data.table_name ? formatString(data.table_name) : undefined,
+          file: geoJsonFile,
+        });
+        setIsEditModalOpen(false);
+        setEditingSpatialData(null);
+      } catch (error) {
+        // Error is already set in handleFileUpload
+      }
     }
-    setIsEditModalOpen(false);
-    setEditingSpatialData(null);
   };
 
   return (
@@ -157,6 +179,7 @@ export default function SpatialDataScreen() {
 
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create New Spatial Data">
         <GenericForm<CreateSpatialDataParams> fields={formFields} onSubmit={handleCreateSubmit} />
+        {uploadError && <p className="mt-2 text-sm text-red-600">{uploadError}</p>}
       </Modal>
 
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit Spatial Data">
@@ -165,6 +188,7 @@ export default function SpatialDataScreen() {
           defaultValues={editingSpatialData || undefined}
           onSubmit={handleEditSubmit}
         />
+        {uploadError && <p className="mt-2 text-sm text-red-600">{uploadError}</p>}
       </Modal>
     </div>
   );
