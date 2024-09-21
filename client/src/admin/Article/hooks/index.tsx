@@ -1,10 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import useFetch from '../../../shared/hooks/useFetch';
 
-// Key for article-related queries
 const K_ARTICLE_QUERY_KEY = 'articles';
 
-// Hook for fetching all articles
 export function useQueryArticles() {
   const fetch = useFetch<Article[]>(() => ({
     method: 'GET',
@@ -14,7 +12,6 @@ export function useQueryArticles() {
   return useQuery(K_ARTICLE_QUERY_KEY, fetch);
 }
 
-// Hook for fetching a specific article
 export function useQueryArticle(id: number) {
   const fetch = useFetch<Article>(() => ({
     method: 'GET',
@@ -24,7 +21,6 @@ export function useQueryArticle(id: number) {
   return useQuery([K_ARTICLE_QUERY_KEY, id], fetch);
 }
 
-// Hook for creating a new article
 export function useMutationCreateArticle() {
   const queryClient = useQueryClient();
   const fetch = useFetch<Article, CreateArticleParams>((data) => ({
@@ -40,7 +36,6 @@ export function useMutationCreateArticle() {
   });
 }
 
-// Hook for updating an existing article
 export function useMutationUpdateArticle() {
   const queryClient = useQueryClient();
   const fetch = useFetch<Article, UpdateArticleParams>((data) => ({
@@ -49,7 +44,8 @@ export function useMutationUpdateArticle() {
     data: {
       title: data?.title,
       content: data?.content,
-      image_url: data?.image_url,
+      image_base64: data?.image_base64,
+      image_extension: data?.image_extension,
     },
   }));
 
@@ -60,7 +56,6 @@ export function useMutationUpdateArticle() {
   });
 }
 
-// Hook for deleting an article
 export function useMutationDeleteArticle() {
   const queryClient = useQueryClient();
   const fetch = useFetch<DeleteArticleResponse, DeleteArticleParams>((params) => ({
@@ -75,7 +70,6 @@ export function useMutationDeleteArticle() {
   });
 }
 
-// Types
 export type Article = {
   id: number;
   title: string;
@@ -86,17 +80,19 @@ export type Article = {
   created_at: string;
 };
 
-type CreateArticleParams = {
+export type CreateArticleParams = {
   title: string;
   content: string;
-  image_url: string;
+  image_base64: string;
+  image_extension: string;
 };
 
-type UpdateArticleParams = {
+export type UpdateArticleParams = {
   id: number;
   title?: string;
   content?: string;
-  image_url?: string;
+  image_base64?: string;
+  image_extension?: string;
 };
 
 type DeleteArticleParams = {

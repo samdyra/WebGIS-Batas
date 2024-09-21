@@ -7,10 +7,11 @@ import {
   useMutationCreateArticle,
   useMutationUpdateArticle,
   useMutationDeleteArticle,
+  Article,
+  CreateArticleParams,
+  UpdateArticleParams,
 } from './hooks';
 import { ColumnDef } from '@tanstack/react-table';
-
-import { Article } from './hooks';
 
 export default function ArticleScreen() {
   const { data: articles, isLoading, error } = useQueryArticles();
@@ -26,33 +27,19 @@ export default function ArticleScreen() {
   if (error) return <div>An error occurred</div>;
 
   const columns: ColumnDef<Article>[] = [
-    {
-      header: 'ID',
-      accessorKey: 'id',
-    },
-    {
-      header: 'Title',
-      accessorKey: 'title',
-    },
-    {
-      header: 'Author',
-      accessorKey: 'author',
-    },
-    {
-      header: 'Content',
-      accessorKey: 'content',
-    },
+    { header: 'ID', accessorKey: 'id' },
+    { header: 'Title', accessorKey: 'title' },
+    { header: 'Author', accessorKey: 'author' },
+    { header: 'Content', accessorKey: 'content' },
     {
       header: 'Image',
       accessorKey: 'image_url',
+      cell: ({ getValue }) => <img src={getValue() as string} alt="Article" className="w-20 h-20 object-cover" />,
     },
-    {
-      header: 'Created At',
-      accessorKey: 'created_at',
-    },
+    { header: 'Created At', accessorKey: 'created_at' },
   ];
 
-  const formFields: FieldConfig<Article>[] = [
+  const formFields: FieldConfig<CreateArticleParams | UpdateArticleParams>[] = [
     {
       name: 'title',
       label: 'Title',
@@ -68,17 +55,14 @@ export default function ArticleScreen() {
       description: 'Enter the main body of the article. You can use markdown for formatting.',
     },
     {
-      name: 'image_url',
-      label: 'Image URL',
-      type: 'text',
-      required: true,
-      description: 'Enter the URL of the main image for the article.',
+      name: 'image_base64',
+      label: 'Image',
+      type: 'file',
+      description: 'Upload an image for the article.',
     },
   ];
 
-  const handleCreate = () => {
-    setIsCreateModalOpen(true);
-  };
+  const handleCreate = () => setIsCreateModalOpen(true);
 
   const handleEdit = (article: Article) => {
     setEditingArticle(article);
@@ -91,17 +75,51 @@ export default function ArticleScreen() {
     }
   };
 
-  const handleCreateSubmit = (data: Partial<Article>) => {
-    createArticle(data as Article);
+  const handleCreateSubmit = async (data: CreateArticleParams) => {
+    const imageFile = data.image_base64 as unknown as File;
+    const imageBase64 = await convertToBase64(imageFile);
+    const strippedBase64 = imageBase64.substring(imageBase64.indexOf(',') + 1);
+
+    const imageExtension = imageFile.name.split('.').pop() || '';
+
+    createArticle({
+      ...data,
+      image_base64: strippedBase64,
+      image_extension: imageExtension,
+    });
     setIsCreateModalOpen(false);
   };
 
-  const handleEditSubmit = (data: Partial<Article>) => {
+  const handleEditSubmit = async (data: UpdateArticleParams) => {
     if (editingArticle) {
-      updateArticle({ id: editingArticle.id, ...data });
+      let imageBase64 = undefined;
+      let imageExtension = undefined;
+      let strippedBase64 = undefined;
+
+      if (data.image_base64) {
+        const imageFile = data.image_base64 as unknown as File;
+        imageBase64 = await convertToBase64(imageFile);
+        strippedBase64 = imageBase64.substring(imageBase64.indexOf(',') + 1);
+        imageExtension = imageFile.name.split('.').pop() || '';
+      }
+
+      updateArticle({
+        ...data,
+        image_base64: strippedBase64,
+        image_extension: imageExtension,
+      });
     }
     setIsEditModalOpen(false);
     setEditingArticle(null);
+  };
+
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   return (
@@ -115,11 +133,11 @@ export default function ArticleScreen() {
       />
 
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create New Article">
-        <GenericForm<Article> fields={formFields} onSubmit={handleCreateSubmit} />
+        <GenericForm<CreateArticleParams> fields={formFields} onSubmit={handleCreateSubmit} />
       </Modal>
 
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit Article">
-        <GenericForm<Article>
+        <GenericForm<UpdateArticleParams>
           fields={formFields}
           defaultValues={editingArticle || undefined}
           onSubmit={handleEditSubmit}

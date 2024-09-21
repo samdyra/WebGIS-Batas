@@ -1,0 +1,1 @@
+1. docker compose dan makefile masukin db dan storage
