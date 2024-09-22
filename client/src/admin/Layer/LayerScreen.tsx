@@ -5,6 +5,8 @@ import { GenericForm, FieldConfig } from '../shared/components/Form';
 import { useQueryLayers, useMutationCreateLayer, useMutationUpdateLayer, useMutationDeleteLayer } from './hooks';
 import { ColumnDef } from '@tanstack/react-table';
 import { Layer, CreateLayerParams, UpdateLayerParams } from './hooks';
+import { HexColorPicker } from 'react-colorful';
+
 import { Controller } from 'react-hook-form';
 
 import { useQuerySpatialData } from '../SpatialData/hooks';
@@ -106,9 +108,28 @@ export default function LayerScreen() {
     {
       name: 'color',
       label: 'Color',
-      type: 'text',
+      type: 'custom',
       required: true,
-      description: 'Enter the color as a hex code (e.g., #FF0000 for red).',
+      description: 'Select a color for the layer.',
+      component: ({ control }) => (
+        <Controller
+          name="color"
+          control={control}
+          rules={{ required: 'Color is required' }}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <HexColorPicker color={field.value} onChange={field.onChange} />
+              <input
+                type="text"
+                {...field}
+                onChange={(e) => field.onChange(e.target.value)}
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+              {error && <p className="mt-2 text-sm text-red-600">{error.message}</p>}
+            </>
+          )}
+        />
+      ),
     },
   ];
 
@@ -128,8 +149,25 @@ export default function LayerScreen() {
     {
       name: 'color',
       label: 'Color',
-      type: 'text',
-      description: 'Enter the color as a hex code (e.g., #FF0000 for red).',
+      type: 'custom',
+      description: 'Select a color for the layer.',
+      component: ({ control }) => (
+        <Controller
+          name="color"
+          control={control}
+          render={({ field }) => (
+            <>
+              <HexColorPicker color={field.value} onChange={field.onChange} />
+              <input
+                type="text"
+                {...field}
+                onChange={(e) => field.onChange(e.target.value)}
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+            </>
+          )}
+        />
+      ),
     },
   ];
 
@@ -157,11 +195,11 @@ export default function LayerScreen() {
     setIsCreateModalOpen(false);
   };
 
-  const handleEditSubmit = (data: Partial<Layer>) => {
+  const handleEditSubmit = (data: Partial<CreateLayerParams>) => {
     if (editingLayer) {
       updateLayer({
         id: editingLayer.id,
-        ...data,
+        color: data?.color ?? '',
       });
     }
     setIsEditModalOpen(false);

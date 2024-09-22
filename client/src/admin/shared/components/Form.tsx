@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, FieldValues, Path, UseFormRegister, SubmitHandler, DefaultValues } from 'react-hook-form';
+import { useForm, FieldValues, Path, UseFormRegister, SubmitHandler, DefaultValues, Control } from 'react-hook-form';
 
 export interface FieldConfig<T extends FieldValues> {
   name: Path<T>;
@@ -8,7 +8,7 @@ export interface FieldConfig<T extends FieldValues> {
   required?: boolean;
   options?: { value: string; label: string }[];
   description?: string;
-  component?: React.ComponentType<any>;
+  component?: React.ComponentType<{ control: Control<T> }>;
   validation?: Record<string, any>;
 }
 
