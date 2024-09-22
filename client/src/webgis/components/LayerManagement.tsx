@@ -85,7 +85,7 @@ const LayerManagement: React.FC = () => {
                           </button>
                           <button
                             className="p-1 hover:bg-gray-100 rounded focus:outline-none"
-                            onClick={() => handleShowAttributes(convertToSnakeCase(layer.layer_name))}
+                            onClick={() => handleShowAttributes(convertToSnakeCase(layer.table_name))}
                           >
                             <FaTable className="h-3 w-3" />
                           </button>

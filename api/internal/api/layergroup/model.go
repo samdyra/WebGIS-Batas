@@ -27,8 +27,9 @@ type GroupWithLayers struct {
 }
 
 type LayerDetail struct {
-    LayerID   int64  `json:"layer_id"`
-    LayerName string `json:"layer_name"`
-    Coordinate []float64 `json:"coordinate"`
-    Color      string    `json:"color"`
+	LayerID    int64     `json:"layer_id"`
+	LayerName  string    `json:"layer_name"`
+	TableName  string    `json:"table_name"`
+	Coordinate []float64 `json:"coordinate"`
+	Color      string    `json:"color"`
 }

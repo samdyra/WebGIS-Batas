@@ -24,9 +24,10 @@ func (s *GeoJSONService) GenerateGeoJSON(tableName string) ([]byte, error) {
 					'type', 'Feature',
 					'geometry', ST_AsGeoJSON(geom)::json,
 					'properties', json_build_object(
-						'wadmkc', wadmkc,
-						'wadmkk', wadmkk,
-						'wadmpr', wadmpr
+						'NAMOBJ', NAMOBJ,
+						'OBJECTID', OBJECTID,
+						'REMARK', REMARK,
+						'UUPP', UUPP
 					)
 				)
 			)

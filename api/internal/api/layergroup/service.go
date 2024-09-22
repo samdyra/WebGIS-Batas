@@ -51,6 +51,7 @@ func (s *Service) GetGroupsWithLayers() ([]GroupWithLayers, error) {
 				json_build_object(
 					'layer_id', l.id, 
 					'layer_name', l.layer_name,
+					'table_name', sd.table_name,
 					'coordinate', l.coordinate,
 					'color', l.color
 				)
@@ -61,6 +62,8 @@ func (s *Service) GetGroupsWithLayers() ([]GroupWithLayers, error) {
 			layer_layer_group llg ON lg.id = llg.layer_group_id
 		LEFT JOIN 
 			layer l ON llg.layer_id = l.id
+		LEFT JOIN
+			spatial_data sd ON l.spatial_data_id = sd.id
 		GROUP BY 
 			lg.id, lg.group_name
 	`
