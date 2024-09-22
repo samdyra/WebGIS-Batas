@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient, useQueries } from 'react-query';
 import useFetch from '../../../shared/hooks/useFetch';
 
 // Key for layer-related queries
@@ -6,15 +6,42 @@ const K_LAYER_QUERY_KEY = 'layers';
 
 // Hook for fetching layers
 export function useQueryLayers(ids?: string | number[]) {
-  const fetch = useFetch<Layer[]>(() => ({
+  const fetchLayers = useFetch<Layer[], { id: string | number }>((args) => ({
     method: 'GET',
     url: '/layers',
-    params: { id: Array.isArray(ids) ? ids.join(',') : ids || '*' },
+    params: { id: args?.id },
   }));
 
-  return useQuery([K_LAYER_QUERY_KEY, ids], fetch);
-}
+  const normalizedIds = Array.isArray(ids) ? ids : ids ? [ids] : ['*'];
 
+  const queries = normalizedIds.map((id) => ({
+    queryKey: [K_LAYER_QUERY_KEY, id],
+    queryFn: () => fetchLayers({ id }),
+    staleTime: Infinity, // Prevent automatic refetching
+  }));
+
+  const results = useQueries(queries);
+
+  // Combine the results into a single array
+  const combinedData = results.reduce<Layer[]>((acc, result) => {
+    if (result.data) {
+      acc.push(...result.data);
+    }
+    return acc;
+  }, []);
+
+  // Calculate loading and error states
+  const isLoading = results.some((result) => result.isLoading);
+  const isError = results.some((result) => result.isError);
+  const error = results.find((result) => result.error)?.error;
+
+  return {
+    data: combinedData,
+    isLoading,
+    isError,
+    error,
+  };
+}
 // Hook for creating a new layer
 export function useMutationCreateLayer() {
   const queryClient = useQueryClient();
@@ -99,7 +126,6 @@ export type CreateLayerParams = {
   id: number[] | '*';
   spatial_data_id: number;
   layer_name: string;
-  coordinate: [number, number];
   color: string;
 };
 

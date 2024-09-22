@@ -104,13 +104,6 @@ export default function LayerScreen() {
       description: 'Enter the name of the layer.',
     },
     {
-      name: 'coordinate',
-      label: 'Coordinate',
-      type: 'text',
-      required: true,
-      description: 'Enter the coordinate as a comma-separated pair of numbers (e.g., 0,0).',
-    },
-    {
       name: 'color',
       label: 'Color',
       type: 'text',
@@ -120,18 +113,18 @@ export default function LayerScreen() {
   ];
 
   const formFieldEdit: FieldConfig<UpdateLayerParams>[] = [
-    {
-      name: 'layer_name',
-      label: 'Layer Name',
-      type: 'text',
-      description: 'Enter the name of the layer.',
-    },
-    {
-      name: 'coordinate',
-      label: 'Coordinate',
-      type: 'text',
-      description: 'Enter the coordinate as a comma-separated pair of numbers (e.g., 0,0).',
-    },
+    // {
+    //   name: 'layer_name',
+    //   label: 'Layer Name',
+    //   type: 'text',
+    //   description: 'Enter the name of the layer.',
+    // },
+    // {
+    //   name: 'coordinate',
+    //   label: 'Coordinate',
+    //   type: 'text',
+    //   description: 'Enter the coordinate as a comma-separated pair of numbers (e.g., 0,0).',
+    // },
     {
       name: 'color',
       label: 'Color',
@@ -156,23 +149,19 @@ export default function LayerScreen() {
   };
 
   const handleCreateSubmit = (data: Partial<CreateLayerParams>) => {
-    const coordinateArray = (data.coordinate as unknown as string).split(',').map(Number);
-
     createLayer({
       ...data,
       spatial_data_id: Number(data.id),
-      coordinate: coordinateArray as [number, number],
+      coordinate: [0, 0],
     } as any);
     setIsCreateModalOpen(false);
   };
 
   const handleEditSubmit = (data: Partial<Layer>) => {
     if (editingLayer) {
-      const coordinateArray = (data.coordinate as unknown as string).split(',').map(Number);
       updateLayer({
         id: editingLayer.id,
         ...data,
-        coordinate: coordinateArray as [number, number],
       });
     }
     setIsEditModalOpen(false);

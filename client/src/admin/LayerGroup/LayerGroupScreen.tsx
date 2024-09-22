@@ -49,8 +49,8 @@ export default function LayerGroupScreen() {
     {
       header: 'Layers',
       accessorKey: 'layers',
-      cell: ({ getValue }) => {
-        return (getValue() as { layer_name: string }[]).map((layer) => layer.layer_name).join(', ');
+      cell: () => {
+        return 'Click Edit to see assigned layers';
       },
     },
   ];

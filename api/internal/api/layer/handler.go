@@ -24,12 +24,6 @@ func (h *Handler) CreateLayer(c *gin.Context) {
         return
     }
 
-    // Validate coordinate
-    if len(input.Coordinate) != 2 {
-        c.JSON(http.StatusBadRequest, errors.ErrInternalServer)
-        return
-    }
-
     username, exists := c.Get("username")
     if !exists {
         c.JSON(http.StatusUnauthorized, errors.NewAPIError(errors.ErrUnauthorized))

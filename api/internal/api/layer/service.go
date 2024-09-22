@@ -18,26 +18,65 @@ type Service struct {
 func NewService(db *sqlx.DB) *Service {
     return &Service{db: db}
 }
-
 func (s *Service) CreateLayer(layer LayerCreate, username string) error {
-    query := `INSERT INTO layer (spatial_data_id, layer_name, coordinate, color, created_at, updated_at, created_by, updated_by)
+    // Start a transaction
+    tx, err := s.db.Beginx()
+    if err != nil {
+        return errors.ErrInternalServer
+    }
+    defer tx.Rollback()
+
+    // Fetch the table name from spatial_data
+    var tableName string
+    err = tx.Get(&tableName, "SELECT table_name FROM spatial_data WHERE id = $1", layer.SpatialDataID)
+    if err != nil {
+        return errors.ErrInternalServer
+    }
+
+    // Fetch the first coordinate from the spatial data table
+    var coordinateJSON string
+    query := fmt.Sprintf("SELECT ST_AsGeoJSON(ST_Centroid(geom)) FROM %s LIMIT 1", tableName)
+    err = tx.Get(&coordinateJSON, query)
+    if err != nil {
+        return errors.ErrInternalServer
+    }
+
+    // Parse the GeoJSON to extract the coordinates
+    var geojson map[string]interface{}
+    err = json.Unmarshal([]byte(coordinateJSON), &geojson)
+    if err != nil {
+        return errors.ErrInternalServer
+    }
+
+    coordinates, ok := geojson["coordinates"].([]interface{})
+    if !ok || len(coordinates) != 2 {
+        return errors.ErrInternalServer
+    }
+
+    // Convert coordinates to []float64
+    coordinate := []float64{
+        coordinates[0].(float64),
+        coordinates[1].(float64),
+    }
+
+    // Insert the new layer
+    query = `INSERT INTO layer (spatial_data_id, layer_name, coordinate, color, created_at, updated_at, created_by, updated_by)
               VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
     
     now := time.Now()
 
-    // Convert the coordinate slice to a JSON string
-    coordinateJSON, err := json.Marshal(layer.Coordinate)
+    coordinateBytes, err := json.Marshal(coordinate)
+    if err != nil {
+        return errors.ErrInternalServer
+    }
+    coordinateString := string(coordinateBytes)
+
+    _, err = tx.Exec(query, layer.SpatialDataID, layer.LayerName, coordinateString, layer.Color, now, now, username, username)
     if err != nil {
         return errors.ErrInternalServer
     }
 
-    _, err = s.db.Exec(query, layer.SpatialDataID, layer.LayerName, coordinateJSON, layer.Color, now, now, username, username)
-    if err != nil {
-
-        return errors.ErrInternalServer
-    }
-    
-    return nil
+    return tx.Commit()
 }
 
 func (s *Service) UpdateLayer(id int64, update LayerUpdate, username string) error {

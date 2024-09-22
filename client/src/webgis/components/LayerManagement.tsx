@@ -36,7 +36,7 @@ const LayerManagement: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md bg-white rounded-lg overflow-hidden">
+    <div className="max-w-md bg-white rounded-lg overflow-scroll">
       {data?.map((layerGroup) => (
         <div key={layerGroup.group_id} className="border-b border-gray-200 ">
           <button
