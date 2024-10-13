@@ -43,12 +43,18 @@ export default function LayerScreen() {
     },
     {
       header: 'Color',
-      accessorKey: 'layer.paint.line-color',
+      accessorKey: 'layer',
       cell: ({ getValue }) => {
+        // @ts-expect-error
+        const type = getValue()?.type as 'line' | 'fill' | 'circle';
+
+        // @ts-expect-error
+        const bgColor = getValue()?.paint[`${type}-color`];
+
         return (
           <div
             style={{
-              backgroundColor: getValue() as string,
+              backgroundColor: bgColor as string,
               border: '1px solid #000',
               width: '25px',
               height: '25px',

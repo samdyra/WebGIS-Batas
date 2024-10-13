@@ -59,7 +59,7 @@ stop-db:
 # Run database migrations (requires golang-migrate)
 migrate-up:
 	@echo "Running database migrations..."
-	@migrate -path $(PWD)/migrations/up -database "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable" up
+	@migrate -verbose -path "$(PWD)/migrations/up" -database "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable" up
 
 migrate-down:
 	@echo "Running database migrations..."

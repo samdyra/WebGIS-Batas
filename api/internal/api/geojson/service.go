@@ -26,8 +26,7 @@ func (s *GeoJSONService) GenerateGeoJSON(tableName string) ([]byte, error) {
 					'properties', json_build_object(
 						'NAMOBJ', NAMOBJ,
 						'OBJECTID', OBJECTID,
-						'REMARK', REMARK,
-						'UUPP', UUPP
+						'REMARK', REMARK
 					)
 				)
 			)
