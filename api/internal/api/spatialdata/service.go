@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -20,16 +21,29 @@ type SpatialDataService struct {
 func NewSpatialDataService(db *sqlx.DB) *SpatialDataService {
     return &SpatialDataService{db: db}
 }
+func sanitizeColumnName(name string) string {
+    name = strings.ReplaceAll(name, "/", "_")
+    name = strings.ReplaceAll(name, " ", "_")
+    name = strings.Map(func(r rune) rune {
+        if r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z' || r >= '0' && r <= '9' || r == '_' {
+            return r
+        }
+        return '_'
+    }, name)
+    if len(name) > 0 && name[0] >= '0' && name[0] <= '9' {
+        name = "_" + name
+    }
+    return strings.ToLower(name)
+}
+
 func (s *SpatialDataService) CreateSpatialData(spatial_data SpatialDataCreate, file io.Reader, username string) error {
     var existsInSchema, existsInSpatialData bool
 
-    // Check in information_schema.tables
     err := s.db.QueryRow("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = $1)", spatial_data.TableName).Scan(&existsInSchema)
     if err != nil {
         return fmt.Errorf("error checking schema: %w", errors.ErrInternalServer)
     }
 
-    // Check in spatial_data table
     err = s.db.QueryRow("SELECT EXISTS (SELECT FROM spatial_data WHERE table_name = $1)", spatial_data.TableName).Scan(&existsInSpatialData)
     if err != nil {
         return fmt.Errorf("error checking spatial_data: %w", errors.ErrInternalServer)
@@ -69,14 +83,18 @@ func (s *SpatialDataService) CreateSpatialData(spatial_data SpatialDataCreate, f
         return errors.ErrInvalidInput
     }
 
+    columnMapping := make(map[string]string)
     propertyTypes := make(map[string]string)
+    
     for _, feature := range fc.Features {
         for key, value := range feature.Properties {
+            sanitizedKey := sanitizeColumnName(key)
+            columnMapping[key] = sanitizedKey
             inferredType := utils.InferPostgresType(value)
-            if existingType, ok := propertyTypes[key]; ok {
-                propertyTypes[key] = utils.ReconcileTypes(existingType, inferredType)
+            if existingType, ok := propertyTypes[sanitizedKey]; ok {
+                propertyTypes[sanitizedKey] = utils.ReconcileTypes(existingType, inferredType)
             } else {
-                propertyTypes[key] = inferredType
+                propertyTypes[sanitizedKey] = inferredType
             }
         }
     }
@@ -122,8 +140,16 @@ func (s *SpatialDataService) CreateSpatialData(spatial_data SpatialDataCreate, f
 
         params := []interface{}{wkbData, username, username}
         for _, propName := range propertyNames {
-            if val, ok := feature.Properties[propName]; ok {
-                convertedVal, err := utils.ConvertToType(val, propertyTypes[propName])
+            var originalValue interface{}
+            for origKey, sanitizedKey := range columnMapping {
+                if sanitizedKey == propName {
+                    originalValue = feature.Properties[origKey]
+                    break
+                }
+            }
+            
+            if originalValue != nil {
+                convertedVal, err := utils.ConvertToType(originalValue, propertyTypes[propName])
                 if err != nil {
                     return errors.ErrInvalidInput
                 }

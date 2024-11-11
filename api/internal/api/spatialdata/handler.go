@@ -18,12 +18,12 @@ func NewSpatialDataHandler(spatialDataService *SpatialDataService) *SpatialDataH
 }
 
 func (h *SpatialDataHandler) CreateSpatialData(c *gin.Context) {
+    
     var input SpatialDataCreate
     if err := c.ShouldBindWith(&input, binding.Form); err != nil {
         c.JSON(http.StatusBadRequest, errors.NewAPIError(errors.ErrInvalidInput))
         return
     }
-
 
     file, err := c.FormFile("file")
     if err != nil {
