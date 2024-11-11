@@ -1,17 +1,28 @@
 import axios, { type AxiosPromise, type AxiosRequestConfig } from 'axios';
 import useAuthStore from '../../auth/hooks/useAuthStore';
 
+// Create an Axios instance
 const instance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_API_URL,
   timeout: 1000 * 60 * 5,
 });
 
-const baseURLEnv = import.meta.env.VITE_BASE_API_URL;
+// Add interceptors to handle 401 errors globally
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      const { logout } = useAuthStore.getState();
+      logout();
+      alert('Session ended');
+      window.location.href = '/login'; // Redirect to login page
+    }
+    return Promise.reject(error);
+  }
+);
 
+// Fetch function using the Axios instance
 export const fetch = <T>(params: AxiosRequestConfig): AxiosPromise<T> => {
-  const baseURL = baseURLEnv;
-
-  instance.defaults.baseURL = baseURL;
-
   return instance(params);
 };
 
@@ -21,21 +32,22 @@ export default function useFetch<TResponse = unknown, TArgs = unknown>(
   fn: (args?: TArgs) => AxiosRequestConfig,
   contentType: ContentType = 'application/json'
 ) {
-  const { token } = useAuthStore();
+  const { token } = useAuthStore.getState();
 
   return async (args?: TArgs) => {
     const config = fn(args);
 
     let headers: Record<string, string> = {
       Accept: 'application/json',
-      Authorization: `Bearer ${token}`,
     };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     if (contentType === 'application/json') {
       headers['Content-Type'] = 'application/json';
     }
-    // For multipart/form-data, don't set Content-Type header
-    // axios will set it automatically with the correct boundary
 
     return fetch<TResponse>({
       ...config,

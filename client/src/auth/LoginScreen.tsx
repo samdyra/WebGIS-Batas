@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSignIn from './hooks/useSignIn';
+import useAuthStore from './hooks/useAuthStore';
 
 const LoginScreen: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { mutate: signIn, isLoading } = useSignIn();
+
+  const user = useAuthStore((state) => state.user); // Get user from auth store
+
+  useEffect(() => {
+    if (user) {
+      // If user is logged in, navigate to admin page
+      navigate('/admin');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

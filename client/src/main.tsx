@@ -9,6 +9,7 @@ import FloatingNavbar from './shared/components/FloatingNavbar/index.tsx';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AdminScreen from './admin/AdminScreen.tsx';
 import LoginScreen from './auth/LoginScreen.tsx';
+import ProtectedRoute from './auth/utils/ProtectedRoute.tsx';
 
 const queryClient = new QueryClient();
 
@@ -34,10 +35,11 @@ const router = createBrowserRouter([
   {
     path: '/admin',
     element: (
-      <div className="h-screen overflow-hidden">
-        {/* <Navbar className="border-b-2" /> */}
-        <AdminScreen />
-      </div>
+      <ProtectedRoute>
+        <div className="h-screen overflow-hidden">
+          <AdminScreen />
+        </div>
+      </ProtectedRoute>
     ),
   },
   {

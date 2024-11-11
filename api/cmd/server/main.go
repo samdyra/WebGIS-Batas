@@ -25,9 +25,9 @@ func main() {
 	db := database.NewDB(cfg)
 	err := minio.InitMinioClient(
 		"localhost:9000",
-		"RXMI041CuOZZi9ttrbaT",
-		"gx3Sb7N9nsFbrLUaSpKogHCv9WrN8xYbKGWDyvbW",
-		"bucket",
+		"HeRNiSSqejXjo6suaOmJ",
+		"gKNKYRGgPJ89hD3Guwj2Qo2nIyiJFIVa4ouP8FHE",
+		"report",
 	)
 	
 	if err != nil {
