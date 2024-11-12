@@ -17,7 +17,7 @@ const LayerBar = (props: Props) => {
     <div
       className={`${s.wrapper} ${props.className} ${props.isOpen ? 'bg-white' : 'bg-main-yellow'}`}
       style={{
-        height: !props.isOpen ? '40px' : 'calc(100vh - 8.5rem)',
+        height: !props.isOpen ? '40px' : 'calc(100vh - 6rem)',
         width: !props.isOpen ? '50px' : layerWidth,
         left: props.position === 'left' ? '0.5rem' : 'unset',
         right: props.position === 'right' ? '0.5rem' : 'unset',

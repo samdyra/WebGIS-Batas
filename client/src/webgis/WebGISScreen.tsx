@@ -19,7 +19,7 @@ const menuItems = [
 
 function WebGISScreen() {
   const [menuIndex, setMenuIndex] = useState(0);
-  const [isDetailBarOpen, setIsDetailBarOpen] = useState(false);
+  const [isDetailBarOpen, setIsDetailBarOpen] = useState(true);
 
   const handleOpenDetailBar = () => setIsDetailBarOpen(!isDetailBarOpen);
 
@@ -34,7 +34,7 @@ function WebGISScreen() {
       >
         <LayerDetail />
       </Detailbar>
-      <SettingBar />
+      {/* <SettingBar /> */}
       <Sidebar menuItems={menuItems} menuIndex={menuIndex} setMenuIndex={setMenuIndex}>
         {menuIndex === 0 && <LayerManagement />}
         {menuIndex === 1 && <ReportIssue />}
