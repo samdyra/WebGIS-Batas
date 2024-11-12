@@ -11,12 +11,8 @@ import useFeatureData from '../hooks/useGetFeature';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
 
 function convertLayerIdToName(layerId: string): string {
-  // Remove the "source-" prefix
   const withoutPrefix = layerId.replace(/^source-/, '');
-
-  // Replace underscores with spaces
   const withSpaces = withoutPrefix.replace(/_/g, ' ');
-
   return withSpaces;
 }
 
@@ -47,7 +43,6 @@ const MapComponent = () => {
       if (clickedFeatures && clickedFeatures.length > 0) {
         const clickedFeature = clickedFeatures[0];
         console.log(clickedFeature);
-
         setFeatureData(convertLayerIdToName(clickedFeature.layer.source), clickedFeature.properties);
       }
     },
@@ -58,7 +53,42 @@ const MapComponent = () => {
     const layers =
       layersData?.map((mvtLayer) => {
         if (mvtLayer.layer.type === 'circle') {
-          console.log(mvtLayer?.layer?.paint);
+          const color = mvtLayer?.layer?.paint?.['circle-color'] || 'yellow';
+
+          // Create the marker SVG with hole at the top and black outline
+          const markerSvg = `
+            <svg width="24" height="36" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
+              <path 
+                d="M12 0C5.383 0 0 5.383 0 12c0 9.185 12 24 12 24s12-14.815 12-24c0-6.617-5.383-12-12-12z" 
+                fill="${color}"
+                stroke="black"
+                stroke-width="1"
+              />
+              <circle 
+                cx="12" 
+                cy="12" 
+                r="5" 
+                fill="white"
+                stroke="black"
+                stroke-width="1"
+              />
+            </svg>
+          `;
+
+          const markerId = `marker-${mvtLayer?.layer?.id}`;
+
+          // Add the colored marker to the map
+          if (mapRef.current?.getMap()) {
+            const markerImage = new Image();
+            markerImage.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(markerSvg);
+
+            markerImage.onload = () => {
+              const map = mapRef.current?.getMap();
+              if (map) {
+                map.addImage(markerId, markerImage, { sdf: false });
+              }
+            };
+          }
 
           return (
             <Source
@@ -69,12 +99,13 @@ const MapComponent = () => {
             >
               <Layer
                 id={`layer-${mvtLayer?.layer?.id}`}
-                type={mvtLayer?.layer?.type as 'line'}
-                paint={{
-                  'circle-color': 'blue',
-                  'circle-radius': 7,
-                  'circle-stroke-width': 1,
-                  'circle-opacity': 1,
+                type="symbol"
+                layout={{
+                  'icon-image': markerId,
+                  'icon-size': 1,
+                  'icon-allow-overlap': true,
+                  'icon-ignore-placement': true,
+                  'icon-anchor': 'bottom',
                 }}
               />
             </Source>
