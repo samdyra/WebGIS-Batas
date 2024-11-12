@@ -23,18 +23,23 @@ def extract_kabupaten_kota(layer_name):
     Extracts Kabupaten/Kota names from the layer name.
     """
     # Remove 'Delineasi Batas ' prefix
-    rest = layer_name[len('Delineasi Batas '):]
+    prefix = 'Delineasi Batas '
+    if layer_name.startswith(prefix):
+        rest = layer_name[len(prefix):]
+    else:
+        rest = layer_name
+
     # Split by ' dan ' to get individual places
     places = rest.split(' dan ')
     names = []
     for place in places:
         place = place.strip()
         if place.startswith('Kabupaten ') or place.startswith('Kota '):
-            names.append(place.title())
+            names.append(place)
         else:
             # Handle cases where 'Kabupaten' or 'Kota' might be missing
             # Assume missing 'Kabupaten' or 'Kota' prefix means it's 'Kabupaten'
-            place_name = 'Kabupaten ' + place.title()
+            place_name = 'Kabupaten ' + place
             names.append(place_name)
     return names
 
@@ -75,11 +80,8 @@ def get_groups():
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         groups = response.json() or []
-        # Print the groups to inspect the keys
-        # print(f"Groups response: {groups}")
-
-        # Create a mapping of group names to IDs
-        group_dict = {group['group_name']: group['group_id'] for group in groups}  # Use 'group_id' instead of 'id'
+        # Create a mapping of group names to IDs, normalize names to lower case
+        group_dict = {group['group_name'].strip().lower(): group['group_id'] for group in groups}
         return group_dict
     else:
         print(f"Failed to fetch groups. Status Code: {response.status_code}, Response: {response.text}")
@@ -95,7 +97,7 @@ def get_group_id_by_name(group_name):
         groups = response.json()
         for group in groups:
             if group['group_name'] == group_name:
-                return group['group_id']  # Use 'group_id' instead of 'id'
+                return group['group_id']
         return None
     else:
         print(f"Failed to fetch group '{group_name}'. Status Code: {response.status_code}, Response: {response.text}")
@@ -133,12 +135,13 @@ def main():
         kabupaten_kota_names = extract_kabupaten_kota(layer_name)
 
         for name in kabupaten_kota_names:
-            group_id = existing_groups.get(name)
+            normalized_name = name.strip().lower()
+            group_id = existing_groups.get(normalized_name)
             if not group_id:
                 # Create the group
-                group_id = create_group(name)
+                group_id = create_group(name.strip())
                 if group_id:
-                    existing_groups[name] = group_id  # Update existing groups
+                    existing_groups[normalized_name] = group_id  # Update existing groups
                 else:
                     print(f"Failed to get or create group '{name}' for layer '{layer_name}'.")
                     continue

@@ -1,4 +1,5 @@
 import requests
+import re
 
 # Configuration
 API_BASE_URL = 'http://localhost:8080'
@@ -22,32 +23,46 @@ def generate_layer_name(table_name):
     """
     Generates the layer name based on the table_name according to the specified rules.
     """
-    # Remove 'garis_' prefix
-    name = table_name[len('garis_'):]
-    tokens = name.split('_')
-    place_names = []
-    i = 0
-    while i < len(tokens):
-        if tokens[i] == 'kota':
-            if i + 1 < len(tokens):
-                place_type = 'Kota'
-                place_name = tokens[i + 1].capitalize()
-                i += 2
+    print(f"Processing table name: '{table_name}'")
+    
+    # Replace multiple underscores with single
+    name = re.sub('_+', '_', table_name)
+    print(f"Name after cleaning underscores: '{name}'")
+    
+    # Split the table name using '_and_' to separate the two places
+    if '_and_' in name:
+        parts = name.split('_and_')
+        place_names = []
+        for part in parts:
+            # Split the part into tokens
+            tokens = part.split('_')
+            if tokens[0].lower() in ['kabupaten', 'kota']:
+                place_type = tokens[0].capitalize()
+                place_name = ' '.join(token.capitalize() for token in tokens[1:])
             else:
-                print(f"Unexpected end after 'kota' in table_name '{table_name}'.")
-                break
+                # Default to 'Kabupaten' if no place type marker is found
+                place_type = 'Kabupaten'
+                place_name = ' '.join(token.capitalize() for token in tokens)
+            place_names.append((place_type, place_name))
+    else:
+        # Handle cases where '_and_' is not found
+        # Assume the entire name is one place
+        tokens = name.split('_')
+        if tokens[0].lower() in ['kabupaten', 'kota']:
+            place_type = tokens[0].capitalize()
+            place_name = ' '.join(token.capitalize() for token in tokens[1:])
         else:
             place_type = 'Kabupaten'
-            place_name = tokens[i].capitalize()
-            i += 1
-        place_names.append((place_type, place_name))
-
-    if len(place_names) == 2:
-        layer_name = f"Delineasi Batas {place_names[0][0]} {place_names[0][1]} dan {place_names[1][0]} {place_names[1][1]}"
-    else:
-        # Handle cases where there are more or fewer than two place names
-        layer_name = 'Delineasi Batas ' + ' dan '.join([f"{ptype} {pname}" for ptype, pname in place_names])
+            place_name = ' '.join(token.capitalize() for token in tokens)
+        # Duplicate the place name to get two places
+        place_names = [(place_type, place_name), (place_type, place_name)]
+    
+    # Build layer name
+    place_str = ' dan '.join([f"{ptype} {pname}" for ptype, pname in place_names])
+    layer_name = f"Delineasi Batas {place_str}"
+    print(f"Generated layer name: '{layer_name}'\n")
     return layer_name
+
 
 def create_layer(spatial_data_id, layer_name):
     """
@@ -58,7 +73,7 @@ def create_layer(spatial_data_id, layer_name):
         "spatial_data_id": spatial_data_id,
         "layer_name": layer_name,
         "coordinate": [0.0, 0.0],  # Placeholder; server will compute actual coordinate
-        "color": "#FF0000"  # Hex code for red
+        "color": "#FFBF00"  # Hex code for red
     }
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 201:
@@ -72,10 +87,11 @@ def main():
     spatial_data_list = get_spatial_data()
     for spatial_data in spatial_data_list:
         table_name = spatial_data['table_name']
-        if table_name.startswith('garis_') and spatial_data.get('type') == 'LINESTRING':
+        if spatial_data.get('type') == 'LINESTRING':
             spatial_data_id = spatial_data['id']
             layer_name = generate_layer_name(table_name)
-            create_layer(spatial_data_id, layer_name)
+            if layer_name:
+                create_layer(spatial_data_id, layer_name)
 
 if __name__ == "__main__":
     main()

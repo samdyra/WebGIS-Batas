@@ -9,20 +9,34 @@ DIRECTORY = "/Users/dwiputrasam/Documents/data_project_jabar/garis_permen"  # Re
 def transform_table_name(filename):
     """
     Transforms the filename into the desired table name.
-    Example: 'Tasikmalaya_-_Pangandaran.geojson' -> 'garis_tasikmalaya_pangandaran'
+    Example: 'kabupaten_bandung_and_kabupaten_bandung_barat.geojson' -> 'kabupaten_bandung_and_kabupaten_bandung_barat'
     """
     # Remove the '.geojson' extension
-    name = os.path.splitext(filename)[0]
-    # Replace '_-_' with '_'
-    name = name.replace('_-_', '_')
-    # Replace any remaining hyphens or underscores with underscores
-    name = name.replace('-', '_').replace(' ', '_')
-    # Add 'garis_' prefix
-    table_name = f'garis_{name}'
+    table_name = os.path.splitext(filename)[0]
+    # Replace hyphens and spaces with underscores
+    table_name = table_name.replace('-', '_').replace(' ', '_')
     # Ensure the name doesn't start with a number
     if table_name and table_name[0].isdigit():
         table_name = '_' + table_name
     return table_name.lower()
+
+def generate_layer_name(filename_without_extension):
+    """
+    Generates the layer name from the filename.
+    Example: 'kabupaten_bandung_and_kabupaten_bandung_barat' -> 'Delineasi Batas Kabupaten Bandung dan Kabupaten Bandung Barat'
+    """
+    # Replace hyphens with spaces
+    name = filename_without_extension.replace('-', ' ')
+    # Split by '_and_' to get individual places
+    places = name.split('_and_')
+    if len(places) == 2:
+        place1 = places[0].replace('_', ' ').title()
+        place2 = places[1].replace('_', ' ').title()
+        layer_name = f'Delineasi Batas {place1} dan {place2}'
+    else:
+        # If '_and_' not found, use the whole name
+        layer_name = name.replace('_', ' ').title()
+    return layer_name
 
 def upload_file(file_path):
     """
@@ -30,7 +44,8 @@ def upload_file(file_path):
     """
     filename = os.path.basename(file_path)
     table_name = transform_table_name(filename)
-    layer_name = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ')
+    filename_without_extension = os.path.splitext(filename)[0]
+    layer_name = generate_layer_name(filename_without_extension)
     url = f"{API_BASE_URL}/spatial-data"
     headers = {
         "Authorization": f"Bearer {TOKEN}"

@@ -34,7 +34,7 @@ function WebGISScreen() {
       >
         <LayerDetail />
       </Detailbar>
-      {/* <SettingBar /> */}
+      <SettingBar />
       <Sidebar menuItems={menuItems} menuIndex={menuIndex} setMenuIndex={setMenuIndex}>
         {menuIndex === 0 && <LayerManagement />}
         {menuIndex === 1 && <ReportIssue />}
