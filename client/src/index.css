@@ -37,3 +37,8 @@ h6 {
 p {
   @apply text-base
 }
+
+
+.debug {
+  border: 1px solid red
+}
