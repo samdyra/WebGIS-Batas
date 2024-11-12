@@ -16,31 +16,29 @@ func NewGeoJSONService(db *sqlx.DB) *GeoJSONService {
 }
 
 func (s *GeoJSONService) GenerateGeoJSON(tableName string) ([]byte, error) {
-	query := fmt.Sprintf(`
-		SELECT json_build_object(
-			'type', 'FeatureCollection',
-			'features', json_agg(
-				json_build_object(
-					'type', 'Feature',
-					'geometry', ST_AsGeoJSON(geom)::json,
-					'properties', json_build_object(
-						'Point Name', point_name
-					)
-				)
-			)
-		)::text
-		FROM %s;
-	`, tableName)
+    query := fmt.Sprintf(`
+        SELECT json_build_object(
+            'type', 'FeatureCollection',
+            'features', json_agg(
+                json_build_object(
+                    'type', 'Feature',
+                    'geometry', ST_AsGeoJSON(t.geom)::json,
+                    'properties', to_jsonb(t) - 'geom'
+                )
+            )
+        )::text
+        FROM %s AS t;
+    `, tableName)
 
-	log.Printf("Executing query: %s", query)
+    log.Printf("Executing query: %s", query)
 
-	var geojson []byte
-	err := s.db.Get(&geojson, query)
-	if err != nil {
-		log.Printf("Error executing query: %v", err)
-		return nil, err
-	}
+    var geojson []byte
+    err := s.db.Get(&geojson, query)
+    if err != nil {
+        log.Printf("Error executing query: %v", err)
+        return nil, err
+    }
 
-	log.Printf("Successfully generated GeoJSON for table: %s", tableName)
-	return geojson, nil
+    log.Printf("Successfully generated GeoJSON for table: %s", tableName)
+    return geojson, nil
 }
