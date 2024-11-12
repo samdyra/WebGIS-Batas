@@ -24,7 +24,7 @@ const MapComponent = () => {
   const { baseMap } = useQueryBaseMap();
   const mapRef = useRef<MapRef>(null);
   const { ids } = useIDStore();
-  const { data: mvtLayers } = useQueryLayers(ids);
+  const { data: layersData } = useQueryLayers(ids);
   const { coordinate } = useZoomToCoordinate();
   const { setFeatureData } = useFeatureData();
   const { files } = useGeospatialUpload();
@@ -56,7 +56,7 @@ const MapComponent = () => {
 
   const memoizedLayers = useMemo(() => {
     const layers =
-      mvtLayers?.map((mvtLayer) => {
+      layersData?.map((mvtLayer) => {
         if (mvtLayer.layer.type === 'circle') {
           console.log(mvtLayer?.layer?.paint);
 
@@ -136,7 +136,7 @@ const MapComponent = () => {
       )) || [];
 
     return [...layers, ...uploadedLayers];
-  }, [mvtLayers, files]);
+  }, [layersData, files]);
 
   useEffect(() => {
     handleZoomToCoordinate();
@@ -155,7 +155,7 @@ const MapComponent = () => {
         mapStyle={baseMap}
         onClick={handleLayerClick}
         interactiveLayerIds={[
-          ...(mvtLayers?.map((layer) => `layer-${layer?.layer?.id}`) || []),
+          ...(layersData?.map((layer) => `layer-${layer?.layer?.id}`) || []),
           ...(files?.map((file) => `layer-${file.name}`) || []),
         ]}
       >
