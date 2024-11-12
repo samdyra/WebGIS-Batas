@@ -56,20 +56,46 @@ const MapComponent = () => {
 
   const memoizedLayers = useMemo(() => {
     const layers =
-      mvtLayers?.map((mvtLayer) => (
-        <Source
-          key={`mvt-${mvtLayer?.layer?.id}`}
-          id={`source-${mvtLayer?.layer?.id}`}
-          type="geojson"
-          data={mvtLayer?.layer?.source?.tiles}
-        >
-          <Layer
-            id={`layer-${mvtLayer?.layer?.id}`}
-            type={mvtLayer?.layer?.type as 'line'}
-            paint={mvtLayer?.layer?.paint}
-          />
-        </Source>
-      )) || [];
+      mvtLayers?.map((mvtLayer) => {
+        if (mvtLayer.layer.type === 'circle') {
+          console.log(mvtLayer?.layer?.paint);
+
+          return (
+            <Source
+              key={`mvt-${mvtLayer?.layer?.id}`}
+              id={`source-${mvtLayer?.layer?.id}`}
+              type="geojson"
+              data={mvtLayer?.layer?.source?.tiles}
+            >
+              <Layer
+                id={`layer-${mvtLayer?.layer?.id}`}
+                type={mvtLayer?.layer?.type as 'line'}
+                paint={{
+                  'circle-color': 'blue',
+                  'circle-radius': 7,
+                  'circle-stroke-width': 1,
+                  'circle-opacity': 1,
+                }}
+              />
+            </Source>
+          );
+        }
+
+        return (
+          <Source
+            key={`mvt-${mvtLayer?.layer?.id}`}
+            id={`source-${mvtLayer?.layer?.id}`}
+            type="geojson"
+            data={mvtLayer?.layer?.source?.tiles}
+          >
+            <Layer
+              id={`layer-${mvtLayer?.layer?.id}`}
+              type={mvtLayer?.layer?.type as 'line'}
+              paint={mvtLayer?.layer?.paint}
+            />
+          </Source>
+        );
+      }) || [];
 
     const uploadedLayers =
       files?.map((file) => (
