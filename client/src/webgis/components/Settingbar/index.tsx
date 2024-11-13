@@ -54,12 +54,12 @@ const SettingBar = () => {
       {/* <img src={help} className={s.help}></img> */}
       <HelpIcon />
       <div className={s.pembatas}></div>
-      <Searchbar></Searchbar>
-      <div className={s.pembatas}></div>
+      {/* <Searchbar></Searchbar>
+      <div className={s.pembatas}></div> */}
       <BasemapSwitch></BasemapSwitch>
       <div className={s.pembatas}></div>
-      <Dropdown></Dropdown>
-      <div className={s.pembatas}></div>
+      {/* <Dropdown></Dropdown>
+      <div className={s.pembatas}></div> */}
     </div>
   );
 };
