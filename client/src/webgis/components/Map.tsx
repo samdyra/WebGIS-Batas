@@ -49,6 +49,26 @@ const MapComponent = () => {
     [setFeatureData]
   );
 
+  const prevFilesLengthRef = useRef(files ? files.length : 0);
+
+  useEffect(() => {
+    if (files && files.length > prevFilesLengthRef.current) {
+      // New file(s) added
+      const lastFile = files[files.length - 1];
+      if (lastFile.bbox && mapRef.current) {
+        const [minX, minY, maxX, maxY] = lastFile.bbox;
+        mapRef.current.fitBounds(
+          [
+            [minX, minY],
+            [maxX, maxY],
+          ],
+          { padding: 20 }
+        );
+      }
+    }
+    prevFilesLengthRef.current = files ? files.length : 0;
+  }, [files]);
+
   const memoizedLayers = useMemo(() => {
     const layers =
       layersData?.map((mvtLayer) => {
