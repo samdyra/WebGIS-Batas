@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
 import { usePropData } from '../../shared/hooks/usePropData';
 import * as turf from '@turf/turf';
-import { FaTrash, FaSearch } from 'react-icons/fa'; // Importing necessary icons
+import { FaTrash, FaCheck } from 'react-icons/fa'; // Importing necessary icons
+import { Modal } from '../../admin/shared/components/Modal'; // Import the Modal component
 
 // types/GeoJSON.ts
 export interface GeoJSON {
@@ -40,6 +41,10 @@ const CheckAreaBoundary: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedType, setSelectedType] = useState<string>('');
 
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState<string[]>([]); // Changed to string array
+
   // Fetch existing LineString layer data
   const { data: existingData, error, isLoading } = usePropData('Batas_kabupaten_jawa_barat');
 
@@ -67,6 +72,33 @@ const CheckAreaBoundary: React.FC = () => {
     } else {
       alert('Please select both a file and a spatial data type.');
     }
+  };
+
+  // Helper function to generate individual analysis sentences
+  const generateAnalysis = (overlappingProperties: any[]): string[] => {
+    const analysisList: string[] = [];
+
+    overlappingProperties.forEach((prop) => {
+      if (prop.namobj) {
+        const parts = prop.namobj.split(' - ').map((part: string) => part.trim());
+        if (parts.length === 2) {
+          const [kabupaten, secondPart] = parts;
+          // Determine if the second part is a Kota or Kabupaten
+          const isKota = secondPart.startsWith('Kota');
+          const secondLayer = isKota ? secondPart : `Kabupaten ${secondPart}`;
+          const sentence = `Batas antara Kabupaten ${kabupaten} dan ${secondLayer}`;
+          analysisList.push(sentence);
+        } else if (parts.length === 1) {
+          // If only one part, assume it's Kabupaten
+          const [kabupaten] = parts;
+          const sentence = `Batas Kabupaten ${kabupaten}`;
+          analysisList.push(sentence);
+        }
+        // Handle cases where parts.length > 2 if necessary
+      }
+    });
+
+    return analysisList;
   };
 
   // Function to check overlay
@@ -158,7 +190,9 @@ const CheckAreaBoundary: React.FC = () => {
 
     if (overlappingProperties.length > 0) {
       console.log('Overlapping LineString Properties:', overlappingProperties);
-      alert('Overlapping features found! Check the console for properties.');
+      const analysisList = generateAnalysis(overlappingProperties);
+      setModalContent(analysisList); // Set the array
+      setIsModalOpen(true);
     } else {
       console.log('No overlayed');
       alert('No overlayed');
@@ -227,7 +261,7 @@ const CheckAreaBoundary: React.FC = () => {
                         className="p-1 hover:bg-gray-100 rounded focus:outline-none"
                         title="Check Overlay"
                       >
-                        <FaSearch className="h-3 w-3 " />
+                        <FaCheck className="h-3 w-3 text-green-500" />
                       </button>
                       {/* Delete Button */}
                       <button
@@ -235,10 +269,11 @@ const CheckAreaBoundary: React.FC = () => {
                         className="p-1 hover:bg-gray-100 rounded focus:outline-none"
                         title="Delete File"
                       >
-                        <FaTrash className="h-3 w-3 " />
+                        <FaTrash className="h-3 w-3 text-red-500" />
                       </button>
                     </div>
                   </div>
+                  {/* Optional: Color Indicator or Any Other Info */}
                   {/* <div className="w-1 h-10 rounded" style={{ backgroundColor: layer.color }} /> */}
                 </div>
               </li>
@@ -246,6 +281,16 @@ const CheckAreaBoundary: React.FC = () => {
           </ul>
         </div>
       )}
+
+      {/* Modal for Displaying Analysis */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Analisis Overlapping">
+        <h4>Data spasial ini overlap dengan: </h4>
+        <ul className="list-disc list-inside">
+          {modalContent.map((item, idx) => (
+            <li key={idx}>{item}</li>
+          ))}
+        </ul>
+      </Modal>
     </div>
   );
 };
