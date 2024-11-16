@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useQueryLayerGroup from '../../admin/LayerGroup/hooks/useQueryLayerGroup';
 import { FaEye, FaEyeSlash, FaSearch, FaTable, FaChevronRight, FaTimes } from 'react-icons/fa';
 import useIDStore from '../hooks/useIDStore';
@@ -14,6 +14,15 @@ const LayerManagement: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTableName, setSelectedTableName] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    // Prevent body from scrolling when LayerManagement is mounted
+    document.body.style.overflow = 'hidden';
+    return () => {
+      // Restore body scrolling when LayerManagement is unmounted
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   const toggleGroup = (groupId: number) => {
     setExpandedGroups((prev) => (prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]));
@@ -56,7 +65,7 @@ const LayerManagement: React.FC = () => {
   const filteredGroups = data?.filter((group) => group.group_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="flex flex-col h-screen relative">
       {/* Fixed Search Bar */}
       <div className="sticky top-0 bg-white z-10 p-3 border-b">
         <div className="relative">
@@ -80,7 +89,7 @@ const LayerManagement: React.FC = () => {
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pb-16">
         {filteredGroups?.map((layerGroup) => (
           <div key={layerGroup.group_id} className="border-b border-gray-200">
             <button
@@ -166,7 +175,7 @@ const LayerManagement: React.FC = () => {
       </div>
 
       {/* Fixed Clear Button */}
-      <div className="sticky bottom-0 bg-white border-t p-3">
+      <div className="sticky bottom-0 bg-white border-t p-3 mt-lg">
         <button
           onClick={clearIDs}
           className="w-full border border-slate-700 py-1 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm"
