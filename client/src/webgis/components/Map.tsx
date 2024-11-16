@@ -42,7 +42,6 @@ const MapComponent = () => {
       const clickedFeatures = event.features;
       if (clickedFeatures && clickedFeatures.length > 0) {
         const clickedFeature = clickedFeatures[0];
-        console.log(clickedFeature);
         setFeatureData(convertLayerIdToName(clickedFeature.layer.source), clickedFeature.properties);
       }
     },

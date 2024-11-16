@@ -25,8 +25,6 @@ export function useMutationCreateSpatialData() {
       formData.append('file', data.file);
     }
 
-    console.log(formData);
-
     return {
       url: '/spatial-data',
       method: 'POST',

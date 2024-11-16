@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
 import { usePropData } from '../../shared/hooks/usePropData';
 import * as turf from '@turf/turf';
+import { FaTrash, FaSearch } from 'react-icons/fa'; // Importing necessary icons
 
 // types/GeoJSON.ts
 export interface GeoJSON {
@@ -103,7 +104,7 @@ const CheckAreaBoundary: React.FC = () => {
 
     const existingFeatures = existingData.features;
 
-    const overlappingProperties: any[] = [];
+    const overlappingPropertiesSet = new Set<string>();
 
     uploadedFeatures.forEach((uploadedFeature) => {
       if (!uploadedFeature.geometry) {
@@ -146,10 +147,14 @@ const CheckAreaBoundary: React.FC = () => {
         }
 
         if (isOverlapping) {
-          overlappingProperties.push(existingFeature.properties);
+          // Serialize properties to JSON string to store in Set (prevents duplicates)
+          overlappingPropertiesSet.add(JSON.stringify(existingFeature.properties));
         }
       });
     });
+
+    // Convert Set back to array of objects
+    const overlappingProperties = Array.from(overlappingPropertiesSet).map((prop) => JSON.parse(prop));
 
     if (overlappingProperties.length > 0) {
       console.log('Overlapping LineString Properties:', overlappingProperties);
@@ -209,23 +214,32 @@ const CheckAreaBoundary: React.FC = () => {
       {files && files.length > 0 && (
         <div className="mt-4">
           <p className="text-md font-semibold mb-2">Uploaded Files:</p>
-          <ul className="list-disc list-inside">
+          <ul className="pb-2">
             {files.map((file, index) => (
-              <li key={index} className="flex justify-between items-center mb-2 bg-gray-100 p-2 rounded pr-4">
-                <span className="pl-2 text-sm">{file.name}</span>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleCheckOverlay(file)}
-                    className="bg-green-500 hover:bg-green-700 text-white text-sm py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    Check Overlay
-                  </button>
-                  <button
-                    onClick={() => deleteFile(file.name)}
-                    className="bg-red-500 hover:bg-red-700 text-white text-sm py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    Delete
-                  </button>
+              <li key={index} className="mb-2 last:mb-0">
+                <div className="flex items-center justify-between border rounded p-2 text-xs">
+                  <div className="flex flex-col">
+                    <span className="font-medium text-sm">{file.name}</span>
+                    <div className="flex mt-1 space-x-1">
+                      {/* Check Overlay Button */}
+                      <button
+                        onClick={() => handleCheckOverlay(file)}
+                        className="p-1 hover:bg-gray-100 rounded focus:outline-none"
+                        title="Check Overlay"
+                      >
+                        <FaSearch className="h-3 w-3 " />
+                      </button>
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => deleteFile(file.name)}
+                        className="p-1 hover:bg-gray-100 rounded focus:outline-none"
+                        title="Delete File"
+                      >
+                        <FaTrash className="h-3 w-3 " />
+                      </button>
+                    </div>
+                  </div>
+                  {/* <div className="w-1 h-10 rounded" style={{ backgroundColor: layer.color }} /> */}
                 </div>
               </li>
             ))}
