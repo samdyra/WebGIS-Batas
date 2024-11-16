@@ -3,7 +3,7 @@ import requests
 
 # Configuration
 API_BASE_URL = "http://localhost:8080"
-TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzE0MzcwODYsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.x_A0PbqrkRM2mNvos97aa7pfPfVAJBodSYC0JmIojqM"  # Replace with your actual JWT token
+TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzE4MzI2ODgsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.lzyhS0wuNmTr0QUJPsV4w6V-zcegPluJtt5GpHJyElY"  # Replace with your actual JWT token
 DIRECTORY = "/Users/dwiputrasam/Documents/data_project_jabar/permen_geojson"  # Replace with the path to your .geojson files
 
 def sanitize_table_name(filename):

@@ -3,7 +3,7 @@ import re
 
 # Configuration
 API_BASE_URL = 'http://localhost:8080'
-TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzE0MzcwODYsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.x_A0PbqrkRM2mNvos97aa7pfPfVAJBodSYC0JmIojqM"
+TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzE4MzI2ODgsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.lzyhS0wuNmTr0QUJPsV4w6V-zcegPluJtt5GpHJyElY"
 
 headers = {'Authorization': f'Bearer {TOKEN}'}
 
@@ -23,8 +23,8 @@ def extract_kabupaten_kota(layer_name):
     """
     Extracts kabupaten/kota names from the layer name.
     """
-    # Use regex to find all 'Kabupaten X' or 'Kota Y' occurrences
-    pattern = r'(Kabupaten\s+[A-Za-z\s]+?|Kota\s+[A-Za-z\s]+?)\b'
+    # Use regex to find all 'Kabupaten X' or 'Kota Y' occurrences up to ' Dan' or end of string
+    pattern = r'(Kabupaten\s+[A-Za-z\s]+?|Kota\s+[A-Za-z\s]+?)(?=\s+Dan|$)'
     matches = re.findall(pattern, layer_name, re.IGNORECASE)
     # Clean up and standardize the names
     names = [match.strip().title() for match in matches]

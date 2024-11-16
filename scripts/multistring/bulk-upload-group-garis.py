@@ -2,7 +2,7 @@ import requests
 
 # Configuration
 API_BASE_URL = 'http://localhost:8080'
-TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzE1MTA3MTIsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.olmxYoTBnr8c2QeI5nho7Po7KFcN3f097gKO6yc4JEM"  # Replace with your actual JWT token
+TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzE4MzI2ODgsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.lzyhS0wuNmTr0QUJPsV4w6V-zcegPluJtt5GpHJyElY"  # Replace with your actual JWT token
 
 headers = {'Authorization': f'Bearer {TOKEN}'}
 
