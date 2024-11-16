@@ -9,6 +9,7 @@ import useIDStore from '../hooks/useIDStore';
 import useZoomToCoordinate from '../hooks/useZoomToCoordinate';
 import useFeatureData from '../hooks/useGetFeature';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
+import useDetailBarStore from '../hooks/useDetailBarStore';
 
 function convertLayerIdToName(layerId: string): string {
   const withoutPrefix = layerId.replace(/^source-/, '');
@@ -24,6 +25,7 @@ const MapComponent = () => {
   const { coordinate } = useZoomToCoordinate();
   const { setFeatureData } = useFeatureData();
   const { files } = useGeospatialUpload();
+  const { openDetailBar, isDetailBarOpen } = useDetailBarStore();
 
   const handleZoomToCoordinate = useCallback(() => {
     if (coordinate.length) {
@@ -40,7 +42,11 @@ const MapComponent = () => {
   const handleLayerClick = useCallback(
     (event: MapLayerMouseEvent) => {
       const clickedFeatures = event.features;
+
       if (clickedFeatures && clickedFeatures.length > 0) {
+        if (isDetailBarOpen === false) {
+          openDetailBar();
+        }
         const clickedFeature = clickedFeatures[0];
         setFeatureData(convertLayerIdToName(clickedFeature.layer.source), clickedFeature.properties);
       }

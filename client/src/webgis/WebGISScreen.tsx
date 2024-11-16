@@ -1,15 +1,17 @@
+// src/screens/WebGISScreen.js
 import Sidebar from './components/Sidebar';
-import { useState } from 'react';
 import MapComponent from './components/Map';
 import SettingBar from './components/Settingbar';
 import Detailbar from './components/Detailbar';
 import LayerIcon from '../shared/assets/svg/layer';
 import AlertIcon from '../shared/assets/svg/alert';
 import UploadIcon from '../shared/assets/svg/upload';
-import CheckAreaBoundary from './components/CheckArea';
 import ReportIssue from './components/ReportIssue';
+import CheckAreaBoundary from './components/CheckArea';
 import LayerManagement from './components/LayerManagement';
 import LayerDetail from './components/LayerDetail';
+import useDetailBarStore from './hooks/useDetailBarStore';
+import { useState } from 'react';
 
 const menuItems = [
   { icon: LayerIcon, label: 'Manajemen Layer' },
@@ -19,14 +21,12 @@ const menuItems = [
 
 function WebGISScreen() {
   const [menuIndex, setMenuIndex] = useState(0);
-  const [isDetailBarOpen, setIsDetailBarOpen] = useState(true);
-
-  const handleOpenDetailBar = () => setIsDetailBarOpen(!isDetailBarOpen);
+  const { isDetailBarOpen, toggleDetailBar } = useDetailBarStore();
 
   return (
     <>
       <Detailbar
-        handleShowLayerbar={handleOpenDetailBar}
+        handleShowLayerbar={toggleDetailBar}
         isOpen={isDetailBarOpen}
         position="right"
         size="large"
