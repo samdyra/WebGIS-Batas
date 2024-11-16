@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Modal } from '../../admin/shared/components/Modal';
-import { FaSpinner, FaDownload } from 'react-icons/fa';
+import { FaSpinner, FaDownload, FaSave } from 'react-icons/fa';
 import { usePropData } from '../../shared/hooks/usePropData';
 import shpwrite from '@mapbox/shp-write';
-// @ts-ignore
-import { saveAs } from 'file-saver'; // Import saveAs from file-saver
+import { saveAs } from 'file-saver';
+import Papa from 'papaparse';
 
 function convertFromSnakeCase(str: string): string {
   return str
@@ -21,7 +21,8 @@ interface PropViewerProps {
 
 const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, tableName }) => {
   const { data, error, isLoading } = usePropData(tableName);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isDownloadingShapefile, setIsDownloadingShapefile] = useState(false);
+  const [isDownloadingCSV, setIsDownloadingCSV] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const columns = data?.features?.length ?? 0 > 0 ? Object.keys(data?.features[0].properties ?? {}) : [];
@@ -34,48 +35,102 @@ const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, tableName }) =
     }
 
     const options = {
-      folder: convertFromSnakeCase(tableName), // Folder name inside ZIP
-      filename: convertFromSnakeCase(tableName), // Base filename for ZIP
-      outputType: 'blob' as const, // Output as Blob
-      compression: 'DEFLATE' as const, // Compression method
+      folder: convertFromSnakeCase(tableName),
+      filename: convertFromSnakeCase(tableName),
+      outputType: 'blob' as const,
+      compression: 'DEFLATE' as const,
       types: {
-        point: convertFromSnakeCase(tableName), // Shapefile type names
+        point: convertFromSnakeCase(tableName),
         polygon: convertFromSnakeCase(tableName),
         polyline: convertFromSnakeCase(tableName),
       },
     };
 
     try {
-      setIsDownloading(true);
+      setIsDownloadingShapefile(true);
       setDownloadError(null);
 
-      // Generate the ZIP blob
-      // @ts-ignore
       const zipData = await shpwrite.zip(data, options);
-
-      // Trigger the download using FileSaver
       saveAs(zipData, `${options.filename}.zip`);
     } catch (err) {
       console.error('Error downloading Shapefile:', err);
-      setDownloadError('Failed to download Shapefile.');
+      if (err instanceof Error) {
+        setDownloadError(`Failed to download Shapefile: ${err.message}`);
+      } else {
+        setDownloadError('Failed to download Shapefile.');
+      }
     } finally {
-      setIsDownloading(false);
+      setIsDownloadingShapefile(false);
     }
   };
 
+  // Function to handle CSV download
+  const handleDownloadCSV = () => {
+    if (!data) {
+      alert('No data available to download.');
+      return;
+    }
+
+    try {
+      setIsDownloadingCSV(true);
+      setDownloadError(null);
+
+      const csvData = data.features.map((feature) => feature.properties);
+      const formattedCsvData = csvData.map((item) => {
+        const formattedItem: { [key: string]: any } = {};
+        Object.keys(item).forEach((key) => {
+          formattedItem[convertFromSnakeCase(key)] = item[key] ?? '';
+        });
+        return formattedItem;
+      });
+
+      const csv = Papa.unparse(formattedCsvData);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, `${convertFromSnakeCase(tableName)}.csv`);
+    } catch (err) {
+      console.error('Error downloading CSV:', err);
+      if (err instanceof Error) {
+        setDownloadError(`Failed to download CSV: ${err.message}`);
+      } else {
+        setDownloadError('Failed to download CSV.');
+      }
+    } finally {
+      setIsDownloadingCSV(false);
+    }
+  };
+
+  // Consolidate all footer buttons
+  const footerButtons = (
+    <>
+      <button
+        onClick={handleDownloadShapefile}
+        className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50"
+        disabled={isDownloadingShapefile}
+        aria-label="Download Shapefile"
+      >
+        <FaDownload className="mr-2" />
+        {isDownloadingShapefile ? 'Downloading Shapefile...' : 'Download Shapefile'}
+      </button>
+      <button
+        onClick={handleDownloadCSV}
+        className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-50"
+        disabled={isDownloadingCSV}
+        aria-label="Download CSV"
+      >
+        <FaDownload className="mr-2" />
+        {isDownloadingCSV ? 'Downloading CSV...' : 'Download CSV'}
+      </button>
+    </>
+  );
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Table Atribut ${convertFromSnakeCase(tableName)}`}>
-      <div className="flex justify-end p-4">
-        <button
-          onClick={handleDownloadShapefile}
-          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none disabled:opacity-50"
-          disabled={isDownloading}
-        >
-          <FaDownload className="mr-2" />
-          {isDownloading ? 'Downloading...' : 'Download Shapefile'}
-        </button>
-      </div>
-      {downloadError && <p className="text-red-500 text-center">{downloadError}</p>}
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Table Atribut ${convertFromSnakeCase(tableName)}`}
+      extraFooterButton={footerButtons} // Passing all footer buttons
+    >
+      {/* Content: Loading, Error, or Table */}
       {isLoading ? (
         <div className="flex justify-center items-center h-48">
           <FaSpinner className="animate-spin text-4xl text-blue-500" />
@@ -114,6 +169,9 @@ const PropViewer: React.FC<PropViewerProps> = ({ isOpen, onClose, tableName }) =
           </table>
         </div>
       )}
+
+      {/* Error Message for Downloads */}
+      {downloadError && <p className="text-red-500 text-center">{downloadError}</p>}
     </Modal>
   );
 };

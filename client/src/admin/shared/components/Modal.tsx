@@ -7,9 +7,10 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  extraFooterButton?: React.ReactNode; // Optional extra button
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, extraFooterButton }) => {
   const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -34,20 +35,29 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 overflow-y-auto h-full w-full">
       <div className="relative top-0 mx-auto p-5 w-full h-full md:h-auto md:max-w-4xl">
         <div className="bg-white rounded-lg shadow relative h-full md:h-auto">
+          {/* Modal Header */}
           <div className="flex items-start justify-between p-5 border-b rounded-t">
             <h3 className="text-xl font-semibold">{title}</h3>
             <button
               onClick={onClose}
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+              aria-label="Close Modal"
             >
               <FaTimes className="w-5 h-5" />
             </button>
           </div>
+
+          {/* Modal Body */}
           <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(100vh-200px)]">{children}</div>
+
+          {/* Modal Footer */}
           <div className="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 rounded-b">
+            {/* Render extraFooterButton if provided */}
+            {extraFooterButton && <div className="flex items-center space-x-2">{extraFooterButton}</div>}
             <button
               onClick={onClose}
               className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10"
+              aria-label="Close Modal"
             >
               Close
             </button>
