@@ -1,5 +1,25 @@
+// components/CheckAreaBoundary.tsx
 import React, { useState } from 'react';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
+import { usePropData } from '../../shared/hooks/usePropData';
+import * as turf from '@turf/turf';
+
+// types/GeoJSON.ts
+export interface GeoJSON {
+  type: string;
+  features: GeoJSONFeature[];
+}
+
+export interface GeoJSONFeature {
+  type: string;
+  properties: {
+    [key: string]: any;
+  };
+  geometry: {
+    type: string;
+    coordinates: number[] | number[][] | number[][][];
+  };
+}
 
 const spatialDataTypes = [
   { value: 'LINESTRING', label: 'LINESTRING' },
@@ -7,10 +27,20 @@ const spatialDataTypes = [
   { value: 'POINT', label: 'POINT' },
 ];
 
+interface UploadedFile {
+  name: string;
+  content: GeoJSON | GeoJSONFeature[] | GeoJSONFeature;
+  type: string;
+  bbox: number[]; // [minX, minY, maxX, maxY]
+}
+
 const CheckAreaBoundary: React.FC = () => {
   const { files, isUploading, handleFileUpload, deleteFile } = useGeospatialUpload();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedType, setSelectedType] = useState<string>('');
+
+  // Fetch existing LineString layer data
+  const { data: existingData, error, isLoading } = usePropData('Batas_kabupaten_jawa_barat');
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,6 +65,98 @@ const CheckAreaBoundary: React.FC = () => {
       }
     } else {
       alert('Please select both a file and a spatial data type.');
+    }
+  };
+
+  // Function to check overlay
+  const handleCheckOverlay = (file: UploadedFile) => {
+    if (isLoading) {
+      console.log('Existing data is still loading...');
+      alert('Existing data is still loading. Please try again later.');
+      return;
+    }
+
+    if (error) {
+      console.log('Error fetching existing data:', error);
+      alert('Error fetching existing data. Please try again later.');
+      return;
+    }
+
+    if (!existingData) {
+      console.log('No existing data available.');
+      alert('No existing data available.');
+      return;
+    }
+
+    let uploadedFeatures: GeoJSONFeature[] = [];
+
+    // Extract features from the uploaded file
+    if (file.content.type === 'FeatureCollection' && Array.isArray(file.content.features)) {
+      uploadedFeatures = file.content.features;
+    } else if (file.content.type === 'Feature') {
+      uploadedFeatures = [file.content];
+    } else {
+      console.log('Unsupported GeoJSON type:', file.content.type);
+      alert('Unsupported GeoJSON type. Please upload a valid Feature or FeatureCollection.');
+      return;
+    }
+
+    const existingFeatures = existingData.features;
+
+    const overlappingProperties: any[] = [];
+
+    uploadedFeatures.forEach((uploadedFeature) => {
+      if (!uploadedFeature.geometry) {
+        console.warn('Uploaded feature has no geometry:', uploadedFeature);
+        return;
+      }
+
+      const uploadedGeometryType = uploadedFeature.geometry.type;
+
+      existingFeatures.forEach((existingFeature) => {
+        if (!existingFeature.geometry) {
+          console.warn('Existing feature has no geometry:', existingFeature);
+          return;
+        }
+
+        const existingGeometryType = existingFeature.geometry.type;
+
+        let isOverlapping = false;
+
+        // Determine the spatial relationship based on geometry types
+        if (
+          (uploadedGeometryType === 'Polygon' || uploadedGeometryType === 'MultiPolygon') &&
+          (existingGeometryType === 'LineString' || existingGeometryType === 'MultiLineString')
+        ) {
+          // Check if LineString intersects with Polygon
+          isOverlapping = turf.booleanIntersects(uploadedFeature, existingFeature);
+        } else if (
+          (uploadedGeometryType === 'LineString' || uploadedGeometryType === 'MultiLineString') &&
+          (existingGeometryType === 'LineString' || existingGeometryType === 'MultiLineString')
+        ) {
+          // Check if LineStrings intersect
+          isOverlapping = turf.booleanIntersects(uploadedFeature, existingFeature);
+        } else if (
+          (uploadedGeometryType === 'Point' || uploadedGeometryType === 'MultiPoint') &&
+          (existingGeometryType === 'LineString' || existingGeometryType === 'MultiLineString')
+        ) {
+          // Check if Point lies on the LineString
+          const pointOnLine = turf.booleanPointOnLine(uploadedFeature, existingFeature);
+          isOverlapping = pointOnLine;
+        }
+
+        if (isOverlapping) {
+          overlappingProperties.push(existingFeature.properties);
+        }
+      });
+    });
+
+    if (overlappingProperties.length > 0) {
+      console.log('Overlapping LineString Properties:', overlappingProperties);
+      alert('Overlapping features found! Check the console for properties.');
+    } else {
+      console.log('No overlayed');
+      alert('No overlayed');
     }
   };
 
@@ -77,7 +199,7 @@ const CheckAreaBoundary: React.FC = () => {
         </div>
         <button
           type="submit"
-          className="bg-main-blue  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-main-blue text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           disabled={isUploading || !selectedFile || !selectedType}
         >
           Submit
@@ -90,15 +212,21 @@ const CheckAreaBoundary: React.FC = () => {
           <ul className="list-disc list-inside">
             {files.map((file, index) => (
               <li key={index} className="flex justify-between items-center mb-2 bg-gray-100 p-2 rounded pr-4">
-                <span className="pl-2">
-                  {file.name} - {file.type}
-                </span>
-                <button
-                  onClick={() => deleteFile(file.name)}
-                  className="bg-red-500 hover:bg-red-700 text-white text-sm py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Delete
-                </button>
+                <span className="pl-2 text-sm">{file.name}</span>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleCheckOverlay(file)}
+                    className="bg-green-500 hover:bg-green-700 text-white text-sm py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    Check Overlay
+                  </button>
+                  <button
+                    onClick={() => deleteFile(file.name)}
+                    className="bg-red-500 hover:bg-red-700 text-white text-sm py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
