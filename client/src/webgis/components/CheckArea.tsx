@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
 import { usePropData } from '../../shared/hooks/usePropData';
 import * as turf from '@turf/turf';
-import { FaTrash, FaCheck } from 'react-icons/fa'; // Importing necessary icons
+import { FaTrash, FaCalculator } from 'react-icons/fa'; // Importing necessary icons
 import { Modal } from '../../admin/shared/components/Modal'; // Import the Modal component
 
 // types/GeoJSON.ts
@@ -247,7 +247,7 @@ const CheckAreaBoundary: React.FC = () => {
       {isUploading && <p className="mt-4">Uploading...</p>}
       {files && files.length > 0 && (
         <div className="mt-4">
-          <p className="text-md font-semibold mb-2">Uploaded Files:</p>
+          <p className="text-md font-semibold mb-2">Data Spasial yang terunggahs:</p>
           <ul className="pb-2">
             {files.map((file, index) => (
               <li key={index} className="mb-2 last:mb-0">
@@ -261,7 +261,7 @@ const CheckAreaBoundary: React.FC = () => {
                         className="p-1 hover:bg-gray-100 rounded focus:outline-none"
                         title="Check Overlay"
                       >
-                        <FaCheck className="h-3 w-3 text-green-500" />
+                        <FaCalculator className="h-3 w-3 " />
                       </button>
                       {/* Delete Button */}
                       <button
@@ -269,12 +269,12 @@ const CheckAreaBoundary: React.FC = () => {
                         className="p-1 hover:bg-gray-100 rounded focus:outline-none"
                         title="Delete File"
                       >
-                        <FaTrash className="h-3 w-3 text-red-500" />
+                        <FaTrash className="h-3 w-3 " />
                       </button>
                     </div>
                   </div>
                   {/* Optional: Color Indicator or Any Other Info */}
-                  {/* <div className="w-1 h-10 rounded" style={{ backgroundColor: layer.color }} /> */}
+                  <div className="w-1 h-10 rounded" style={{ backgroundColor: 'rgba(255, 0, 0, 1)' }} />
                 </div>
               </li>
             ))}

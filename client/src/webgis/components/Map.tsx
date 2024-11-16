@@ -155,7 +155,7 @@ const MapComponent = () => {
               id={`layer-${file.name}`}
               type="fill"
               paint={{
-                'fill-color': 'rgba(0, 255, 0, 0.5)',
+                'fill-color': 'rgba(255, 0, 0, 0.5)',
                 'fill-outline-color': 'green',
               }}
             />
