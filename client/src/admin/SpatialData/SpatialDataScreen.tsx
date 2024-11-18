@@ -174,7 +174,9 @@ export default function SpatialDataScreen() {
         columns={columns}
         onCreate={handleCreate}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={(data) => {
+          deleteSpatialData({ table_name: data.table_name });
+        }}
       />
 
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create New Spatial Data">

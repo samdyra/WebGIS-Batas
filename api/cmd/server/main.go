@@ -24,10 +24,10 @@ func main() {
 	cfg := config.Load()
 	db := database.NewDB(cfg)
 	err := minio.InitMinioClient(
-		"localhost:9000",
-		"HeRNiSSqejXjo6suaOmJ",
-		"gKNKYRGgPJ89hD3Guwj2Qo2nIyiJFIVa4ouP8FHE",
-		"report",
+		"103.6.53.254:20281",
+		"zZbGl7Z7WTE56QdOX1k0",
+		"Yer7LqxfF8Fj2SHEiv5MXkDIMbhzFIHWqGI5Q6Z2",
+		"bucket",
 	)
 	
 	if err != nil {
@@ -64,7 +64,7 @@ func main() {
 	// CORS middleware
 	r.Use(cors.New(cors.Config{
 		// @TODO: Change this to the actual frontend URL from env
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:5174"},
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:5174", "http://103.6.53.254:20279"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "Segmen Kabupaten Bandung - Kabupaten Subang",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Point Name": "TK.07", "Latitude": "06° 48' 38.9620\" LS", "Longitude": "107° 43' 35.5060\" BT", "Desa / Kelurahan": "-", "Kecamatan": "-", "Kabupaten / Kota (Provinsi)": "Kabupaten Subang (Jawa Barat) / Kabupaten Bandung Barat (Jawa Barat) / Kabupaten Bandung (Jawa Barat)" }, "geometry": { "type": "Point", "coordinates": [ 107.726529444444438, -6.810822777777778 ] } },
+{ "type": "Feature", "properties": { "Point Name": "TK.08", "Latitude": "06° 48' 51.3713\" LS", "Longitude": "107° 44' 00.7292\" BT", "Desa / Kelurahan": "-", "Kecamatan": "-", "Kabupaten / Kota (Provinsi)": "Kabupaten Subang (Jawa Barat) / Kabupaten Bandung (Jawa Barat)" }, "geometry": { "type": "Point", "coordinates": [ 107.733535888888895, -6.814269805555556 ] } },
+{ "type": "Feature", "properties": { "Point Name": "PABU 055", "Latitude": "06° 48' 58.0000\" LS", "Longitude": "107° 44' 40.4000\" BT", "Desa / Kelurahan": "Cipanjalu / Cupunagara", "Kecamatan": "Cilengkrang / Cisalak", "Kabupaten / Kota (Provinsi)": "Kabupaten Bandung (Jawa Barat) / Kabupaten Subang (Jawa Barat)" }, "geometry": { "type": "Point", "coordinates": [ 107.74455555555555, -6.816111111111111 ] } },
+{ "type": "Feature", "properties": { "Point Name": "TK.09", "Latitude": "06° 48' 46.2420\" LS", "Longitude": "107° 45' 00.0003\" BT", "Desa / Kelurahan": "-", "Kecamatan": "-", "Kabupaten / Kota (Provinsi)": "Kabupaten Subang (Jawa Barat) / Kabupaten Bandung (Jawa Barat) / Kabupaten Sumedang (Jawa Barat)" }, "geometry": { "type": "Point", "coordinates": [ 107.750000083333333, -6.812845 ] } }
+]
+}

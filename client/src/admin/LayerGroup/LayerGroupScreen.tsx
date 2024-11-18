@@ -142,7 +142,14 @@ export default function LayerGroupScreen() {
         columns={columns}
         onCreate={handleCreate}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={
+
+          (group) => {
+            deleteGroup({
+              id: group.group_id,
+            });
+          }
+        }
       />
 
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create New Layer Group">

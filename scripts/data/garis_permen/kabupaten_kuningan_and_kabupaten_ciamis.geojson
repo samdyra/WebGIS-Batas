@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "kabupaten_kuningan_and_kabupaten_ciamis",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::9518" } },
+"features": [
+{ "type": "Feature", "properties": { "OBJECTID": 29, "NAMOBJ": "Kuningan - Ciamis", "FCODE": "BA02060040", "REMARK": "Garis Bantu", "METADATA": "TASWIL5000020220921KABKOTA", "SRS_ID": "4326", "ADMIN1": "32.08", "ADMIN2": "32.07", "KARKTR": 999, "KLBADM": 8, "PJGBTS": 0.0, "STSBTS": 999, "TIPLOK": 1, "TIPTBT": 2, "UUPP": null, "WADKC1": null, "WADKC2": null, "WAKBK1": "Kuningan", "WAKBK2": "Ciamis", "WAKLD1": null, "WAKLD2": null, "WAPRO1": "Jawa Barat", "WAPRO2": "Jawa Barat", "RuleID": 4, "SHAPE_Leng": 3.929888e-05 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 108.385781742000063, -7.073507351999979 ], [ 108.385742544000038, -7.073510165999949 ] ] ] } }
+]
+}

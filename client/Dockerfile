@@ -1,27 +1,24 @@
-# Use the official Node.js 20-slim base image
-FROM node:18-slim
+# Stage 1: Build the app
+FROM node:18-alpine AS builder
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
 
-# Install dependencies
-RUN npm install
+RUN yarn install
 
-# Install serve to serve the build
-RUN npm install -g serve
-
-# Copy the rest of the application code
 COPY . .
 
-# Build the React app
-RUN npm run build
+# Build the application, ignoring TypeScript errors
+RUN yarn build
 
-# Expose the port the app runs on  (only for documentation, does not actually publish the port)
-# this is for the port on the container, not the host/server
-EXPOSE 3000
+# Stage 2: Serve the app with Nginx
+FROM nginx:stable-alpine
 
-# Start the app using serve
-CMD ["serve", "-s", "dist", "-l", "3000"]
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 6379
+
+CMD ["nginx", "-g", "daemon off;"]

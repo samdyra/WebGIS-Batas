@@ -2,8 +2,8 @@ import requests
 import re
 
 # Configuration
-API_BASE_URL = 'http://localhost:8080'
-TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzE4MzI2ODgsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.lzyhS0wuNmTr0QUJPsV4w6V-zcegPluJtt5GpHJyElY"  # Replace with your actual JWT token
+API_BASE_URL = "http://localhost:5000"
+TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzIwMDc1NzUsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.r6sOMLj7B_TspBKHuWR4CWEvC-vWJnaCbS29982-XIk"
 
 headers = {'Authorization': f'Bearer {TOKEN}'}
 
@@ -73,7 +73,7 @@ def create_layer(spatial_data_id, layer_name):
         "spatial_data_id": spatial_data_id,
         "layer_name": layer_name,
         "coordinate": [0.0, 0.0],  # Placeholder; server will compute actual coordinate
-        "color": "#FFBF00"  # Hex code for red
+        "color": "yellow" 
     }
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 201:

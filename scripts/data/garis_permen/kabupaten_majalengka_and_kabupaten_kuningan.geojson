@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "kabupaten_majalengka_and_kabupaten_kuningan",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::9518" } },
+"features": [
+{ "type": "Feature", "properties": { "OBJECTID": 67, "NAMOBJ": "Majalengka - Kuningan", "FCODE": "BA02060040", "REMARK": "Garis Bantu", "METADATA": "TASWIL5000020220921KABKOTA", "SRS_ID": "4326", "ADMIN1": "32.10", "ADMIN2": "32.08", "KARKTR": 999, "KLBADM": 8, "PJGBTS": 0.0, "STSBTS": 999, "TIPLOK": 1, "TIPTBT": 2, "UUPP": null, "WADKC1": null, "WADKC2": null, "WAKBK1": "Majalengka", "WAKBK2": "Kuningan", "WAKLD1": null, "WAKLD2": null, "WAPRO1": "Jawa Barat", "WAPRO2": "Jawa Barat", "RuleID": 4, "SHAPE_Leng": 0.00014670456 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 108.385740877000046, -7.073462755999969 ], [ 108.385742544000038, -7.073510165999949 ], [ 108.385746031000053, -7.073609369999929 ] ] ] } }
+]
+}

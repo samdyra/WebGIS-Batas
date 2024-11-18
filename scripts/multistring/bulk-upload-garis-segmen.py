@@ -2,9 +2,10 @@ import os
 import requests
 
 # Configuration
-API_BASE_URL = "http://localhost:8080"
-TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzE4MzI2ODgsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.lzyhS0wuNmTr0QUJPsV4w6V-zcegPluJtt5GpHJyElY"  # Replace with your actual JWT token
-DIRECTORY = "/Users/dwiputrasam/Documents/data_project_jabar/garis_permen"  # Replace with the path to your .geojson files
+API_BASE_URL = "http://localhost:5000"
+TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzIwMDc1NzUsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoic2FtZHlyYSJ9.r6sOMLj7B_TspBKHuWR4CWEvC-vWJnaCbS29982-XIk"
+DIRECTORY = "../data/garis_permen"  # Replace with the path to your .geojson files
+
 
 def transform_table_name(filename):
     """

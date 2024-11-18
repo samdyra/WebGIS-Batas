@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "Segmen Kabupaten Tasikmalaya - Kabupaten Majalengka",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Point Name": "TK.01", "Latitude": "07° 02' 19.60578\" LS", "Longitude": "108° 08' 15.65380\" BT", "Desa / Kelurahan": "-", "Kecamatan": "-", "Kabupaten": "Kabupaten Tasikmalaya (Jawa Barat) / Kabupaten Majalengka (Jawa Barat) / Kabupaten Sumedang (Jawa Barat)" }, "geometry": { "type": "Point", "coordinates": [ 108.137681611111105, -7.038779383333333 ] } },
+{ "type": "Feature", "properties": { "Point Name": "TK.02", "Latitude": "07° 02' 52.09870\" LS", "Longitude": "108° 08' 45.13789\" BT", "Desa / Kelurahan": "-", "Kecamatan": "-", "Kabupaten": "Kabupaten Tasikmalaya (Jawa Barat) / Kabupaten Majalengka (Jawa Barat)" }, "geometry": { "type": "Point", "coordinates": [ 108.14587163611111, -7.047805194444445 ] } },
+{ "type": "Feature", "properties": { "Point Name": "PABU 45K", "Latitude": "07° 04' 01.88866\" LS", "Longitude": "108° 09' 22.65401\" BT", "Desa / Kelurahan": "Guranteng / Cipasung", "Kecamatan": "Pagerageung / Lemahsugih", "Kabupaten": "Kabupaten Tasikmalaya (Jawa Barat) / Kabupaten Majalengka (Jawa Barat)" }, "geometry": { "type": "Point", "coordinates": [ 108.15629278055556, -7.067191294444444 ] } },
+{ "type": "Feature", "properties": { "Point Name": "TK.03", "Latitude": "07° 03' 48.57806\" LS", "Longitude": "108° 10' 01.29142\" BT", "Desa / Kelurahan": "-", "Kecamatan": "-", "Kabupaten": "Kabupaten Tasikmalaya (Jawa Barat) / Kabupaten Majalengka (Jawa Barat) / Kabupaten Ciamis (Jawa Barat)" }, "geometry": { "type": "Point", "coordinates": [ 108.167025394444451, -7.063493905555555 ] } }
+]
+}

@@ -3,7 +3,7 @@ import useAuthStore from '../../auth/hooks/useAuthStore';
 
 // Create an Axios instance
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API_URL,
+  baseURL: 'http://103.6.53.254:20250',
   timeout: 1000 * 60 * 5,
 });
 

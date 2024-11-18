@@ -219,7 +219,9 @@ export default function LayerScreen() {
         columns={columns}
         onCreate={handleCreate}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={(layer) => {
+          deleteLayer({ id: layer.id });
+        }}
       />
 
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create New Layer">

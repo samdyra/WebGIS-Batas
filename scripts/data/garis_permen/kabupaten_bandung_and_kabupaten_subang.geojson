@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "kabupaten_bandung_and_kabupaten_subang",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::9518" } },
+"features": [
+{ "type": "Feature", "properties": { "OBJECTID": 275, "NAMOBJ": "Bandung - Subang", "FCODE": "BA02060040", "REMARK": "Permendagri No: 18 Thn 2014", "METADATA": "TASWIL5000020220921KABKOTA", "SRS_ID": "4326", "ADMIN1": "32.04", "ADMIN2": "32.13", "KARKTR": 999, "KLBADM": 8, "PJGBTS": 0.0, "STSBTS": 1, "TIPLOK": 1, "TIPTBT": 2, "UUPP": "Permendagri Nomor 18 Tahun 2014", "WADKC1": null, "WADKC2": null, "WAKBK1": "Bandung", "WAKBK2": "Subang", "WAKLD1": null, "WAKLD2": null, "WAPRO1": "Jawa Barat", "WAPRO2": "Jawa Barat", "RuleID": 5, "SHAPE_Leng": 0.00399340142 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 107.746156799000062, -6.813650491999965 ], [ 107.746513465000078, -6.813652308999963 ], [ 107.74689492400006, -6.813712854999949 ], [ 107.747291665000034, -6.813686644999962 ], [ 107.747505268000054, -6.813674215999981 ], [ 107.747779925000088, -6.813619400999926 ], [ 107.748222438000084, -6.813501137999936 ], [ 107.748458964000065, -6.813389548999965 ], [ 107.74901589600006, -6.813143519999926 ], [ 107.749443151000037, -6.812980911999944 ], [ 107.750000082000042, -6.812844997999946 ] ] ] } }
+]
+}

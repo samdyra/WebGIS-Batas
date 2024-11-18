@@ -24,6 +24,15 @@ run: build
 	@echo "Running $(BINARY_NAME)..."
 	@./$(BINARY_NAME)
 
+stop-bg:
+	@echo "Stopping $(BINARY_NAME)..."
+	@pkill $(BINARY_NAME) || echo "Process not found"
+
+run-bg: build
+	@echo "Running $(BINARY_NAME) in background..."
+	@nohup ./$(BINARY_NAME) > app.log 2>&1 &
+	@echo "Application started. Check app.log for output"
+
 # Run tests
 test:
 	@echo "Running tests..."
