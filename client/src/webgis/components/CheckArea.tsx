@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
 import { usePropData } from '../../shared/hooks/usePropData';
 import * as turf from '@turf/turf';
-import { FaTrash, FaCalculator } from 'react-icons/fa';
+import { FaTrash, FaCalculator, FaDownload } from 'react-icons/fa';
 import { Modal } from '../../admin/shared/components/Modal';
+import shpwrite from '@mapbox/shp-write';
+import { saveAs } from 'file-saver';
 
 interface GeoJSON {
   type: string;
@@ -28,17 +30,10 @@ interface EnhancedAnalysis {
     uploadedLength?: number;
     intersectionLength?: number;
     percentageOverlap?: number;
-    distanceToNearestBoundary?: number;
     intersectingPoints?: number[][];
   };
   recommendations: string[];
 }
-
-const spatialDataTypes = [
-  { value: 'LINESTRING', label: 'LINESTRING' },
-  { value: 'POLYGON', label: 'POLYGON' },
-  { value: 'POINT', label: 'POINT' },
-];
 
 interface UploadedFile {
   name: string;
@@ -47,6 +42,29 @@ interface UploadedFile {
   bbox: number[];
 }
 
+const spatialDataTypes = [
+  { value: 'LINESTRING', label: 'LINESTRING' },
+  { value: 'POLYGON', label: 'POLYGON' },
+  { value: 'POINT', label: 'POINT' },
+];
+
+const generateIntersectionPointsGeoJSON = (points: number[][]) => {
+  return {
+    type: 'FeatureCollection',
+    features: points.map((coords, idx) => ({
+      type: 'Feature',
+      properties: {
+        id: idx + 1,
+        description: `Titik Potong ${idx + 1}`,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: coords,
+      },
+    })),
+  };
+};
+
 const analyzeGeometry = (uploadedFeature: GeoJSONFeature, existingFeatures: GeoJSONFeature[]): EnhancedAnalysis => {
   const analysis: EnhancedAnalysis = {
     overlappingBoundaries: [],
@@ -54,7 +72,6 @@ const analyzeGeometry = (uploadedFeature: GeoJSONFeature, existingFeatures: GeoJ
     recommendations: [],
   };
 
-  // Calculate base metrics for uploaded feature
   if (uploadedFeature.geometry.type.includes('Polygon')) {
     const area = turf.area(uploadedFeature);
     analysis.metrics.uploadedArea = Number((area / 1000000).toFixed(2));
@@ -65,11 +82,9 @@ const analyzeGeometry = (uploadedFeature: GeoJSONFeature, existingFeatures: GeoJ
 
   let totalIntersectionLength = 0;
   let intersectionPoints: number[][] = [];
-  let minDistance = Infinity;
 
   existingFeatures.forEach((existingFeature) => {
     const isOverlapping = turf.booleanIntersects(uploadedFeature, existingFeature);
-
     if (isOverlapping) {
       if (existingFeature.properties.namobj) {
         const boundaryName = generateBoundaryName(existingFeature.properties.namobj);
@@ -78,7 +93,11 @@ const analyzeGeometry = (uploadedFeature: GeoJSONFeature, existingFeatures: GeoJ
 
       const intersection = turf.lineIntersect(uploadedFeature, existingFeature);
       if (intersection.features.length > 0) {
-        intersectionPoints = intersection.features.map((f) => f.geometry.coordinates as number[]);
+        const points = intersection.features.map((f) => {
+          const coords = f.geometry.coordinates as number[];
+          return [Number(coords[0].toFixed(6)), Number(coords[1].toFixed(6))];
+        });
+        intersectionPoints.push(...points);
       }
 
       if (uploadedFeature.geometry.type.includes('LineString')) {
@@ -86,21 +105,6 @@ const analyzeGeometry = (uploadedFeature: GeoJSONFeature, existingFeatures: GeoJ
         const overlapLength = turf.length(intersectingLine);
         totalIntersectionLength += overlapLength;
       }
-    } else {
-      // Handle MultiLineString by splitting into individual LineStrings
-      const coordinates =
-        existingFeature.geometry.type === 'MultiLineString'
-          ? existingFeature.geometry.coordinates
-          : [existingFeature.geometry.coordinates];
-
-      let minLineDistance = Infinity;
-      coordinates.forEach((lineCoords) => {
-        const lineString = turf.lineString(lineCoords);
-        const distance = turf.pointToLineDistance(turf.center(uploadedFeature), lineString);
-        minLineDistance = Math.min(minLineDistance, distance);
-      });
-
-      minDistance = Math.min(minDistance, minLineDistance * 1000);
     }
   });
 
@@ -113,11 +117,8 @@ const analyzeGeometry = (uploadedFeature: GeoJSONFeature, existingFeatures: GeoJ
     }
   }
 
-  analysis.metrics.distanceToNearestBoundary = Number(minDistance.toFixed(0));
   analysis.metrics.intersectingPoints = intersectionPoints;
-
-  analysis.recommendations = generateRecommendations(analysis);
-
+  analysis.recommendations = generateRecommendations(analysis, intersectionPoints);
   return analysis;
 };
 
@@ -132,33 +133,22 @@ const generateBoundaryName = (namobj: string): string => {
   return `Batas Kabupaten ${parts[0]}`;
 };
 
-const generateRecommendations = (analysis: EnhancedAnalysis): string[] => {
+const generateRecommendations = (analysis: EnhancedAnalysis, intersectionPoints: number[][]): string[] => {
   const recommendations: string[] = [];
-
   if (analysis.overlappingBoundaries.length > 0) {
     if (analysis.metrics.percentageOverlap && analysis.metrics.percentageOverlap > 80) {
       recommendations.push(
         'Area ini berada di zona perbatasan dengan overlap yang signifikan. Pertimbangkan untuk berkonsultasi dengan kedua kabupaten/kota terkait.'
       );
     }
-
-    if (analysis.metrics.intersectingPoints && analysis.metrics.intersectingPoints.length > 1) {
-      recommendations.push(
-        'Terdapat beberapa titik perpotongan dengan batas administratif. Disarankan untuk melakukan verifikasi lapangan pada titik-titik tersebut.'
-      );
-    }
-  } else if (analysis.metrics.distanceToNearestBoundary) {
-    if (analysis.metrics.distanceToNearestBoundary < 100) {
-      recommendations.push(
-        'Area ini sangat dekat dengan batas administratif (kurang dari 100 meter). Perhatikan potensi perubahan batas di masa mendatang.'
-      );
-    } else {
-      recommendations.push(
-        `Area ini berjarak ${analysis.metrics.distanceToNearestBoundary} meter dari batas administratif terdekat.`
-      );
+    if (intersectionPoints.length > 0) {
+      recommendations.push('Titik-titik perpotongan dengan batas administratif:');
+      intersectionPoints.forEach((point, index) => {
+        recommendations.push(`- Titik ${index + 1}: ${point[0]}° BT, ${point[1]}° LS`);
+      });
+      recommendations.push('Disarankan untuk melakukan verifikasi lapangan pada titik-titik tersebut.');
     }
   }
-
   return recommendations;
 };
 
@@ -168,6 +158,7 @@ const CheckAreaBoundary: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<string[]>([]);
+  const [currentIntersectionPoints, setCurrentIntersectionPoints] = useState<number[][]>([]);
   const { data: existingData, error, isLoading } = usePropData('Batas_kabupaten_jawa_barat');
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,6 +187,34 @@ const CheckAreaBoundary: React.FC = () => {
     }
   };
 
+  const handleDownloadPointsShapefile = () => {
+    if (currentIntersectionPoints.length === 0) return;
+
+    const pointsGeoJSON = generateIntersectionPointsGeoJSON(currentIntersectionPoints);
+    const options = {
+      folder: 'Titik_Potong',
+      filename: 'Titik_Potong',
+      outputType: 'blob' as const,
+      types: {
+        point: 'Titik_Potong',
+      },
+    };
+
+    shpwrite.zip(pointsGeoJSON, options).then((blob) => {
+      saveAs(blob, 'Titik_Potong.zip');
+    });
+  };
+
+  const handleDownloadPointsGeoJSON = () => {
+    if (currentIntersectionPoints.length === 0) return;
+
+    const pointsGeoJSON = generateIntersectionPointsGeoJSON(currentIntersectionPoints);
+    const blob = new Blob([JSON.stringify(pointsGeoJSON, null, 2)], {
+      type: 'application/json',
+    });
+    saveAs(blob, 'Titik_Potong.geojson');
+  };
+
   const handleCheckOverlay = (file: UploadedFile) => {
     if (isLoading) {
       alert('Existing data is still loading. Please try again later.');
@@ -213,7 +232,6 @@ const CheckAreaBoundary: React.FC = () => {
     }
 
     let uploadedFeatures: GeoJSONFeature[] = [];
-
     if (file.content.type === 'FeatureCollection' && Array.isArray(file.content.features)) {
       uploadedFeatures = file.content.features;
     } else if (file.content.type === 'Feature') {
@@ -225,6 +243,7 @@ const CheckAreaBoundary: React.FC = () => {
 
     const existingFeatures = existingData.features;
     const allAnalyses: EnhancedAnalysis[] = [];
+    let allIntersectionPoints: number[][] = [];
 
     uploadedFeatures.forEach((uploadedFeature) => {
       if (!uploadedFeature.geometry) {
@@ -234,12 +253,14 @@ const CheckAreaBoundary: React.FC = () => {
 
       const analysis = analyzeGeometry(uploadedFeature, existingFeatures);
       allAnalyses.push(analysis);
+      if (analysis.metrics.intersectingPoints) {
+        allIntersectionPoints = [...allIntersectionPoints, ...analysis.metrics.intersectingPoints];
+      }
     });
 
-    // Combine all analyses into modal content
     const combinedContent: string[] = [];
     allAnalyses.forEach((analysis, index) => {
-      if (index > 0) combinedContent.push('---'); // Separator between multiple features
+      if (index > 0) combinedContent.push('---');
 
       if (analysis.overlappingBoundaries.length > 0) {
         combinedContent.push('Data spasial ini overlap dengan:');
@@ -260,18 +281,38 @@ const CheckAreaBoundary: React.FC = () => {
       if (analysis.metrics.percentageOverlap !== undefined) {
         combinedContent.push(`- Persentase overlap: ${analysis.metrics.percentageOverlap}%`);
       }
-      if (analysis.metrics.distanceToNearestBoundary !== undefined) {
-        combinedContent.push(`- Jarak ke batas terdekat: ${analysis.metrics.distanceToNearestBoundary} meter`);
-      }
 
       combinedContent.push('');
       combinedContent.push('Rekomendasi:');
       combinedContent.push(...analysis.recommendations);
     });
 
+    setCurrentIntersectionPoints(allIntersectionPoints);
     setModalContent(combinedContent);
     setIsModalOpen(true);
   };
+
+  const downloadButtons =
+    currentIntersectionPoints.length > 0 ? (
+      <>
+        <button
+          onClick={handleDownloadPointsShapefile}
+          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50"
+          aria-label="Download Shapefile"
+        >
+          <FaDownload className="mr-2" />
+          Titik Potong (SHP)
+        </button>
+        <button
+          onClick={handleDownloadPointsGeoJSON}
+          className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-50"
+          aria-label="Download CSV"
+        >
+          <FaDownload className="mr-2" />
+          Titik Potong (GeoJSON)
+        </button>
+      </>
+    ) : null;
 
   return (
     <div className="border-2 mx-sm pt-sm rounded-md h-full mb-2 p-4">
@@ -353,7 +394,12 @@ const CheckAreaBoundary: React.FC = () => {
         </div>
       )}
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Analisis Spasial">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Analisis Spasial"
+        extraFooterButton={downloadButtons}
+      >
         <div className="space-y-2">
           {modalContent.map((item, idx) => (
             <p key={idx} className={item === '---' ? 'border-t my-4' : ''}>
