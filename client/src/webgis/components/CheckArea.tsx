@@ -1,18 +1,16 @@
-// components/CheckAreaBoundary.tsx
 import React, { useState } from 'react';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
 import { usePropData } from '../../shared/hooks/usePropData';
 import * as turf from '@turf/turf';
-import { FaTrash, FaCalculator } from 'react-icons/fa'; // Importing necessary icons
-import { Modal } from '../../admin/shared/components/Modal'; // Import the Modal component
+import { FaTrash, FaCalculator } from 'react-icons/fa';
+import { Modal } from '../../admin/shared/components/Modal';
 
-// types/GeoJSON.ts
-export interface GeoJSON {
+interface GeoJSON {
   type: string;
   features: GeoJSONFeature[];
 }
 
-export interface GeoJSONFeature {
+interface GeoJSONFeature {
   type: string;
   properties: {
     [key: string]: any;
@@ -21,6 +19,19 @@ export interface GeoJSONFeature {
     type: string;
     coordinates: number[] | number[][] | number[][][];
   };
+}
+
+interface EnhancedAnalysis {
+  overlappingBoundaries: string[];
+  metrics: {
+    uploadedArea?: number;
+    uploadedLength?: number;
+    intersectionLength?: number;
+    percentageOverlap?: number;
+    distanceToNearestBoundary?: number;
+    intersectingPoints?: number[][];
+  };
+  recommendations: string[];
 }
 
 const spatialDataTypes = [
@@ -33,19 +44,130 @@ interface UploadedFile {
   name: string;
   content: GeoJSON | GeoJSONFeature[] | GeoJSONFeature;
   type: string;
-  bbox: number[]; // [minX, minY, maxX, maxY]
+  bbox: number[];
 }
+
+const analyzeGeometry = (uploadedFeature: GeoJSONFeature, existingFeatures: GeoJSONFeature[]): EnhancedAnalysis => {
+  const analysis: EnhancedAnalysis = {
+    overlappingBoundaries: [],
+    metrics: {},
+    recommendations: [],
+  };
+
+  // Calculate base metrics for uploaded feature
+  if (uploadedFeature.geometry.type.includes('Polygon')) {
+    const area = turf.area(uploadedFeature);
+    analysis.metrics.uploadedArea = Number((area / 1000000).toFixed(2));
+  } else if (uploadedFeature.geometry.type.includes('LineString')) {
+    const length = turf.length(uploadedFeature);
+    analysis.metrics.uploadedLength = Number(length.toFixed(2));
+  }
+
+  let totalIntersectionLength = 0;
+  let intersectionPoints: number[][] = [];
+  let minDistance = Infinity;
+
+  existingFeatures.forEach((existingFeature) => {
+    const isOverlapping = turf.booleanIntersects(uploadedFeature, existingFeature);
+
+    if (isOverlapping) {
+      if (existingFeature.properties.namobj) {
+        const boundaryName = generateBoundaryName(existingFeature.properties.namobj);
+        analysis.overlappingBoundaries.push(boundaryName);
+      }
+
+      const intersection = turf.lineIntersect(uploadedFeature, existingFeature);
+      if (intersection.features.length > 0) {
+        intersectionPoints = intersection.features.map((f) => f.geometry.coordinates as number[]);
+      }
+
+      if (uploadedFeature.geometry.type.includes('LineString')) {
+        const intersectingLine = turf.lineOverlap(uploadedFeature, existingFeature);
+        const overlapLength = turf.length(intersectingLine);
+        totalIntersectionLength += overlapLength;
+      }
+    } else {
+      // Handle MultiLineString by splitting into individual LineStrings
+      const coordinates =
+        existingFeature.geometry.type === 'MultiLineString'
+          ? existingFeature.geometry.coordinates
+          : [existingFeature.geometry.coordinates];
+
+      let minLineDistance = Infinity;
+      coordinates.forEach((lineCoords) => {
+        const lineString = turf.lineString(lineCoords);
+        const distance = turf.pointToLineDistance(turf.center(uploadedFeature), lineString);
+        minLineDistance = Math.min(minLineDistance, distance);
+      });
+
+      minDistance = Math.min(minDistance, minLineDistance * 1000);
+    }
+  });
+
+  if (totalIntersectionLength > 0) {
+    analysis.metrics.intersectionLength = Number(totalIntersectionLength.toFixed(2));
+    if (analysis.metrics.uploadedLength) {
+      analysis.metrics.percentageOverlap = Number(
+        ((totalIntersectionLength / analysis.metrics.uploadedLength) * 100).toFixed(1)
+      );
+    }
+  }
+
+  analysis.metrics.distanceToNearestBoundary = Number(minDistance.toFixed(0));
+  analysis.metrics.intersectingPoints = intersectionPoints;
+
+  analysis.recommendations = generateRecommendations(analysis);
+
+  return analysis;
+};
+
+const generateBoundaryName = (namobj: string): string => {
+  const parts = namobj.split(' - ').map((part) => part.trim());
+  if (parts.length === 2) {
+    const [kabupaten, secondPart] = parts;
+    const isKota = secondPart.startsWith('Kota');
+    const secondLayer = isKota ? secondPart : `Kabupaten ${secondPart}`;
+    return `Batas antara Kabupaten ${kabupaten} dan ${secondLayer}`;
+  }
+  return `Batas Kabupaten ${parts[0]}`;
+};
+
+const generateRecommendations = (analysis: EnhancedAnalysis): string[] => {
+  const recommendations: string[] = [];
+
+  if (analysis.overlappingBoundaries.length > 0) {
+    if (analysis.metrics.percentageOverlap && analysis.metrics.percentageOverlap > 80) {
+      recommendations.push(
+        'Area ini berada di zona perbatasan dengan overlap yang signifikan. Pertimbangkan untuk berkonsultasi dengan kedua kabupaten/kota terkait.'
+      );
+    }
+
+    if (analysis.metrics.intersectingPoints && analysis.metrics.intersectingPoints.length > 1) {
+      recommendations.push(
+        'Terdapat beberapa titik perpotongan dengan batas administratif. Disarankan untuk melakukan verifikasi lapangan pada titik-titik tersebut.'
+      );
+    }
+  } else if (analysis.metrics.distanceToNearestBoundary) {
+    if (analysis.metrics.distanceToNearestBoundary < 100) {
+      recommendations.push(
+        'Area ini sangat dekat dengan batas administratif (kurang dari 100 meter). Perhatikan potensi perubahan batas di masa mendatang.'
+      );
+    } else {
+      recommendations.push(
+        `Area ini berjarak ${analysis.metrics.distanceToNearestBoundary} meter dari batas administratif terdekat.`
+      );
+    }
+  }
+
+  return recommendations;
+};
 
 const CheckAreaBoundary: React.FC = () => {
   const { files, isUploading, handleFileUpload, deleteFile } = useGeospatialUpload();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedType, setSelectedType] = useState<string>('');
-
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalContent, setModalContent] = useState<string[]>([]); // Changed to string array
-
-  // Fetch existing LineString layer data
+  const [modalContent, setModalContent] = useState<string[]>([]);
   const { data: existingData, error, isLoading } = usePropData('Batas_kabupaten_jawa_barat');
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,69 +196,35 @@ const CheckAreaBoundary: React.FC = () => {
     }
   };
 
-  // Helper function to generate individual analysis sentences
-  const generateAnalysis = (overlappingProperties: any[]): string[] => {
-    const analysisList: string[] = [];
-
-    overlappingProperties.forEach((prop) => {
-      if (prop.namobj) {
-        const parts = prop.namobj.split(' - ').map((part: string) => part.trim());
-        if (parts.length === 2) {
-          const [kabupaten, secondPart] = parts;
-          // Determine if the second part is a Kota or Kabupaten
-          const isKota = secondPart.startsWith('Kota');
-          const secondLayer = isKota ? secondPart : `Kabupaten ${secondPart}`;
-          const sentence = `Batas antara Kabupaten ${kabupaten} dan ${secondLayer}`;
-          analysisList.push(sentence);
-        } else if (parts.length === 1) {
-          // If only one part, assume it's Kabupaten
-          const [kabupaten] = parts;
-          const sentence = `Batas Kabupaten ${kabupaten}`;
-          analysisList.push(sentence);
-        }
-        // Handle cases where parts.length > 2 if necessary
-      }
-    });
-
-    return analysisList;
-  };
-
-  // Function to check overlay
   const handleCheckOverlay = (file: UploadedFile) => {
     if (isLoading) {
-      console.log('Existing data is still loading...');
       alert('Existing data is still loading. Please try again later.');
       return;
     }
 
     if (error) {
-      console.log('Error fetching existing data:', error);
       alert('Error fetching existing data. Please try again later.');
       return;
     }
 
     if (!existingData) {
-      console.log('No existing data available.');
       alert('No existing data available.');
       return;
     }
 
     let uploadedFeatures: GeoJSONFeature[] = [];
 
-    // Extract features from the uploaded file
     if (file.content.type === 'FeatureCollection' && Array.isArray(file.content.features)) {
       uploadedFeatures = file.content.features;
     } else if (file.content.type === 'Feature') {
       uploadedFeatures = [file.content];
     } else {
-      console.log('Unsupported GeoJSON type:', file.content.type);
       alert('Unsupported GeoJSON type. Please upload a valid Feature or FeatureCollection.');
       return;
     }
 
     const existingFeatures = existingData.features;
-
-    const overlappingPropertiesSet = new Set<string>();
+    const allAnalyses: EnhancedAnalysis[] = [];
 
     uploadedFeatures.forEach((uploadedFeature) => {
       if (!uploadedFeature.geometry) {
@@ -144,59 +232,45 @@ const CheckAreaBoundary: React.FC = () => {
         return;
       }
 
-      const uploadedGeometryType = uploadedFeature.geometry.type;
-
-      existingFeatures.forEach((existingFeature) => {
-        if (!existingFeature.geometry) {
-          console.warn('Existing feature has no geometry:', existingFeature);
-          return;
-        }
-
-        const existingGeometryType = existingFeature.geometry.type;
-
-        let isOverlapping = false;
-
-        // Determine the spatial relationship based on geometry types
-        if (
-          (uploadedGeometryType === 'Polygon' || uploadedGeometryType === 'MultiPolygon') &&
-          (existingGeometryType === 'LineString' || existingGeometryType === 'MultiLineString')
-        ) {
-          // Check if LineString intersects with Polygon
-          isOverlapping = turf.booleanIntersects(uploadedFeature, existingFeature);
-        } else if (
-          (uploadedGeometryType === 'LineString' || uploadedGeometryType === 'MultiLineString') &&
-          (existingGeometryType === 'LineString' || existingGeometryType === 'MultiLineString')
-        ) {
-          // Check if LineStrings intersect
-          isOverlapping = turf.booleanIntersects(uploadedFeature, existingFeature);
-        } else if (
-          (uploadedGeometryType === 'Point' || uploadedGeometryType === 'MultiPoint') &&
-          (existingGeometryType === 'LineString' || existingGeometryType === 'MultiLineString')
-        ) {
-          // Check if Point lies on the LineString
-          const pointOnLine = turf.booleanPointOnLine(uploadedFeature, existingFeature);
-          isOverlapping = pointOnLine;
-        }
-
-        if (isOverlapping) {
-          // Serialize properties to JSON string to store in Set (prevents duplicates)
-          overlappingPropertiesSet.add(JSON.stringify(existingFeature.properties));
-        }
-      });
+      const analysis = analyzeGeometry(uploadedFeature, existingFeatures);
+      allAnalyses.push(analysis);
     });
 
-    // Convert Set back to array of objects
-    const overlappingProperties = Array.from(overlappingPropertiesSet).map((prop) => JSON.parse(prop));
+    // Combine all analyses into modal content
+    const combinedContent: string[] = [];
+    allAnalyses.forEach((analysis, index) => {
+      if (index > 0) combinedContent.push('---'); // Separator between multiple features
 
-    if (overlappingProperties.length > 0) {
-      console.log('Overlapping LineString Properties:', overlappingProperties);
-      const analysisList = generateAnalysis(overlappingProperties);
-      setModalContent(analysisList); // Set the array
-      setIsModalOpen(true);
-    } else {
-      console.log('No overlayed');
-      alert('No overlayed');
-    }
+      if (analysis.overlappingBoundaries.length > 0) {
+        combinedContent.push('Data spasial ini overlap dengan:');
+        combinedContent.push(...analysis.overlappingBoundaries);
+        combinedContent.push('');
+      }
+
+      combinedContent.push('Metrik Analisis:');
+      if (analysis.metrics.uploadedArea !== undefined) {
+        combinedContent.push(`- Luas area: ${analysis.metrics.uploadedArea} km²`);
+      }
+      if (analysis.metrics.uploadedLength !== undefined) {
+        combinedContent.push(`- Panjang area: ${analysis.metrics.uploadedLength} km`);
+      }
+      if (analysis.metrics.intersectionLength !== undefined) {
+        combinedContent.push(`- Panjang overlap: ${analysis.metrics.intersectionLength} km`);
+      }
+      if (analysis.metrics.percentageOverlap !== undefined) {
+        combinedContent.push(`- Persentase overlap: ${analysis.metrics.percentageOverlap}%`);
+      }
+      if (analysis.metrics.distanceToNearestBoundary !== undefined) {
+        combinedContent.push(`- Jarak ke batas terdekat: ${analysis.metrics.distanceToNearestBoundary} meter`);
+      }
+
+      combinedContent.push('');
+      combinedContent.push('Rekomendasi:');
+      combinedContent.push(...analysis.recommendations);
+    });
+
+    setModalContent(combinedContent);
+    setIsModalOpen(true);
   };
 
   return (
@@ -247,7 +321,7 @@ const CheckAreaBoundary: React.FC = () => {
       {isUploading && <p className="mt-4">Uploading...</p>}
       {files && files.length > 0 && (
         <div className="mt-4">
-          <p className="text-md font-semibold mb-2">Data Spasial yang terunggahs:</p>
+          <p className="text-md font-semibold mb-2">Data Spasial yang terunggah:</p>
           <ul className="pb-2">
             {files.map((file, index) => (
               <li key={index} className="mb-2 last:mb-0">
@@ -255,25 +329,22 @@ const CheckAreaBoundary: React.FC = () => {
                   <div className="flex flex-col">
                     <span className="font-medium text-sm">{file.name}</span>
                     <div className="flex mt-1 space-x-1">
-                      {/* Check Overlay Button */}
                       <button
                         onClick={() => handleCheckOverlay(file)}
                         className="p-1 hover:bg-gray-100 rounded focus:outline-none"
                         title="Check Overlay"
                       >
-                        <FaCalculator className="h-3 w-3 " />
+                        <FaCalculator className="h-3 w-3" />
                       </button>
-                      {/* Delete Button */}
                       <button
                         onClick={() => deleteFile(file.name)}
                         className="p-1 hover:bg-gray-100 rounded focus:outline-none"
                         title="Delete File"
                       >
-                        <FaTrash className="h-3 w-3 " />
+                        <FaTrash className="h-3 w-3" />
                       </button>
                     </div>
                   </div>
-                  {/* Optional: Color Indicator or Any Other Info */}
                   <div className="w-1 h-10 rounded" style={{ backgroundColor: 'rgba(255, 0, 0, 1)' }} />
                 </div>
               </li>
@@ -282,14 +353,14 @@ const CheckAreaBoundary: React.FC = () => {
         </div>
       )}
 
-      {/* Modal for Displaying Analysis */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Analisis Overlapping">
-        <h4>Data spasial ini overlap dengan: </h4>
-        <ul className="list-disc list-inside">
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Analisis Spasial">
+        <div className="space-y-2">
           {modalContent.map((item, idx) => (
-            <li key={idx}>{item}</li>
+            <p key={idx} className={item === '---' ? 'border-t my-4' : ''}>
+              {item !== '---' ? item : ''}
+            </p>
           ))}
-        </ul>
+        </div>
       </Modal>
     </div>
   );

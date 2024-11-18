@@ -64,7 +64,7 @@ func main() {
 	// CORS middleware
 	r.Use(cors.New(cors.Config{
 		// @TODO: Change this to the actual frontend URL from env
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:5174", "http://103.6.53.254:20279"},
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:5174", "http://103.6.53.254:20279", "http://localhost:6379"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
