@@ -52,7 +52,7 @@ func (s *MVTService) GenerateMVT(tableName string, z, x, y int) ([]byte, error) 
 						64,
 						true
 					) AS geom,
-					kecamatan
+					kecamatan, desa
 				FROM %s, tile
 				WHERE %s.geom && tile.geom
 			)

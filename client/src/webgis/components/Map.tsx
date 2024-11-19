@@ -27,7 +27,7 @@ const MapComponent = () => {
   const { setFeatureData } = useFeatureData();
   const { files } = useGeospatialUpload();
   const { openDetailBar, isDetailBarOpen } = useDetailBarStore();
-  const { selectedLayer } = useLayerToggleStore(); // Get the selected layer
+  const { selectedLayer } = useLayerToggleStore();
 
   const handleZoomToCoordinate = useCallback(() => {
     if (coordinate.length) {
@@ -60,7 +60,6 @@ const MapComponent = () => {
 
   useEffect(() => {
     if (files && files.length > prevFilesLengthRef.current) {
-      // New file(s) added
       const lastFile = files[files.length - 1];
       if (lastFile.bbox && mapRef.current) {
         const [minX, minY, maxX, maxY] = lastFile.bbox;
@@ -82,7 +81,7 @@ const MapComponent = () => {
         if (mvtLayer.layer.type === 'circle') {
           const color = mvtLayer?.layer?.paint?.['circle-color'] || 'yellow';
 
-          // Create the marker SVG with hole at the top and black outline
+          // Create the marker SVG with a hole at the top and black outline
           const markerSvg = `
             <svg width="24" height="36" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
               <path 
@@ -193,47 +192,48 @@ const MapComponent = () => {
         </Source>
       )) || [];
 
-    // Conditionally render desaLayer and kecamatanLayer based on selectedLayer
+    // Function to create the boundary layer with unified styling
+    const createBoundaryLayer = (sourceId: string, sourceLayer: string, layerId: string) => (
+      <Source
+        key={sourceId}
+        id={sourceId}
+        type="vector"
+        tiles={[`http://localhost:8080/mvt/${sourceLayer}/{z}/{x}/{y}`]}
+      >
+        {/* Fill Layer */}
+        <Layer
+          id={`${layerId}-fill`}
+          source={sourceId}
+          source-layer={sourceLayer}
+          type="fill"
+          paint={{
+            'fill-color': 'rgba(0, 0, 255, 0.1)', // Light blue fill with 10% opacity
+            'fill-outline-color': 'black', // Outline color
+          }}
+        />
+        {/* Line Layer for bold outline */}
+        <Layer
+          id={`${layerId}-line`}
+          source={sourceId}
+          source-layer={sourceLayer}
+          type="line"
+          paint={{
+            'line-color': 'black', // Outline color
+            'line-width': 2, // Increase the width to make it more visible
+          }}
+        />
+      </Source>
+    );
+
+    // Conditionally render the selected layer with unified styling
     let additionalLayer = null;
     if (selectedLayer === 'desa') {
-      additionalLayer = (
-        <Source
-          key="mvt-source-batas-desa"
-          id="mvt-source-batas-desa"
-          type="vector"
-          tiles={['http://localhost:8080/mvt/Batas_desa/{z}/{x}/{y}']}
-        >
-          <Layer
-            id="mvt-layer-batas-desa"
-            source="mvt-source-batas-desa"
-            source-layer="Batas_desa"
-            type="fill"
-            paint={{
-              'fill-color': 'rgba(0, 0, 255, 0.5)',
-              'fill-outline-color': 'red',
-            }}
-          />
-        </Source>
-      );
+      additionalLayer = createBoundaryLayer('mvt-source-batas-desa', 'Batas_desa', 'mvt-layer-batas-desa');
     } else if (selectedLayer === 'kecamatan') {
-      additionalLayer = (
-        <Source
-          key="mvt-source-batas-kecamatan"
-          id="mvt-source-batas-kecamatan"
-          type="vector"
-          tiles={['http://localhost:8080/mvt/Batas_kecamatan/{z}/{x}/{y}']}
-        >
-          <Layer
-            id="mvt-layer-batas-kecamatan"
-            source="mvt-source-batas-kecamatan"
-            source-layer="Batas_kecamatan"
-            type="fill"
-            paint={{
-              'fill-color': 'rgba(0, 255, 0, 0.5)',
-              'fill-outline-color': 'red',
-            }}
-          />
-        </Source>
+      additionalLayer = createBoundaryLayer(
+        'mvt-source-batas-kecamatan',
+        'Batas_kecamatan',
+        'mvt-layer-batas-kecamatan'
       );
     }
 
@@ -244,7 +244,7 @@ const MapComponent = () => {
     handleZoomToCoordinate();
   }, [coordinate, handleZoomToCoordinate]);
 
-  // Update interactiveLayerIds based on selectedLayer
+  // Update interactiveLayerIds to include the fill layers for interactivity
   const interactiveLayerIds = useMemo(() => {
     const ids = [
       ...(layersData?.map((layer) => `layer-${layer?.layer?.id}`) || []),
@@ -252,9 +252,9 @@ const MapComponent = () => {
     ];
 
     if (selectedLayer === 'desa') {
-      ids.push('mvt-layer-batas-desa');
+      ids.push('mvt-layer-batas-desa-fill');
     } else if (selectedLayer === 'kecamatan') {
-      ids.push('mvt-layer-batas-kecamatan');
+      ids.push('mvt-layer-batas-kecamatan-fill');
     }
 
     return ids;
