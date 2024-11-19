@@ -1,25 +1,11 @@
 import s from './index.module.scss';
-import SatteliteIcon from '../../../shared/assets/svg/sattelite';
-import HelpIcon from '../../../shared/assets/svg/help';
 import SearchIcon from '../../../shared/assets/svg/search';
-import useQueryBaseMap from '../../hooks/useQueryBaseMap';
-import StreetIcon from '../../../shared/assets/svg/street';
+import SatteliteIcon from '../../../shared/assets/svg/sattelite';
 
-const Dropdown = () => {
-  return (
-    <div className={s.dropdown}>
-      <button className={s.dropbtn}>
-        Download Data
-        <i className="fa fa-caret-down"></i>
-      </button>
-      <div className={s.dropdowncontent}>
-        <a href="#">Polygon</a>
-        <a href="#">Contour Lines</a>
-        <a href="#">Map Layout</a>
-      </div>
-    </div>
-  );
-};
+import HelpIcon from '../../../shared/assets/svg/help';
+import useQueryBaseMap from '../../hooks/useQueryBaseMap';
+import { useLayerToggleStore } from '../../../shared/hooks/useLayerToggleStore';
+import StreetIcon from '../../../shared/assets/svg/street';
 
 const BasemapSwitch = () => {
   const { switchBaseMap } = useQueryBaseMap();
@@ -37,29 +23,41 @@ const BasemapSwitch = () => {
   );
 };
 
-const Searchbar = () => {
-  return (
-    <div className={s.searchcontainer}>
-      <div className={s.topnav}>
-        <input type="text" placeholder="Search.." />
-      </div>
-      <SearchIcon />
-    </div>
-  );
-};
-
 const SettingBar = () => {
+  const { selectedLayer, setSelectedLayer } = useLayerToggleStore();
+
   return (
-    <div className={`${s.settingWrapper} border-b-2 `}>
-      {/* <img src={help} className={s.help}></img> */}
+    <div className={`${s.settingWrapper} border-b-2`}>
       <HelpIcon />
       <div className={s.pembatas}></div>
-      {/* <Searchbar></Searchbar>
-      <div className={s.pembatas}></div> */}
-      <BasemapSwitch></BasemapSwitch>
+
+      {/* Layer Toggle */}
+      <div className={s.layerToggle}>
+        <button
+          className={`${s.toggleOption} ${selectedLayer === 'none' ? s.active : ''}`}
+          onClick={() => setSelectedLayer('none')}
+        >
+          Default
+        </button>
+        <button
+          className={`${s.toggleOption} ${selectedLayer === 'desa' ? s.active : ''}`}
+          onClick={() => setSelectedLayer('desa')}
+        >
+          Desa
+        </button>
+        <button
+          className={`${s.toggleOption} ${selectedLayer === 'kecamatan' ? s.active : ''}`}
+          onClick={() => setSelectedLayer('kecamatan')}
+        >
+          Kecamatan
+        </button>
+      </div>
+
       <div className={s.pembatas}></div>
-      {/* <Dropdown></Dropdown>
-      <div className={s.pembatas}></div> */}
+
+      <BasemapSwitch />
+
+      <div className={s.pembatas}></div>
     </div>
   );
 };

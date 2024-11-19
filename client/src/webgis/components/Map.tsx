@@ -10,6 +10,7 @@ import useZoomToCoordinate from '../hooks/useZoomToCoordinate';
 import useFeatureData from '../hooks/useGetFeature';
 import useGeospatialUpload from '../hooks/useGeospatialUpload';
 import useDetailBarStore from '../hooks/useDetailBarStore';
+import { useLayerToggleStore } from '../../shared/hooks/useLayerToggleStore';
 
 function convertLayerIdToName(layerId: string): string {
   const withoutPrefix = layerId.replace(/^source-/, '');
@@ -26,6 +27,7 @@ const MapComponent = () => {
   const { setFeatureData } = useFeatureData();
   const { files } = useGeospatialUpload();
   const { openDetailBar, isDetailBarOpen } = useDetailBarStore();
+  const { selectedLayer } = useLayerToggleStore(); // Get the selected layer
 
   const handleZoomToCoordinate = useCallback(() => {
     if (coordinate.length) {
@@ -51,7 +53,7 @@ const MapComponent = () => {
         setFeatureData(convertLayerIdToName(clickedFeature.layer.source), clickedFeature.properties);
       }
     },
-    [setFeatureData]
+    [setFeatureData, isDetailBarOpen, openDetailBar]
   );
 
   const prevFilesLengthRef = useRef(files ? files.length : 0);
@@ -191,12 +193,72 @@ const MapComponent = () => {
         </Source>
       )) || [];
 
-    return [...layers, ...uploadedLayers];
-  }, [layersData, files]);
+    // Conditionally render desaLayer and kecamatanLayer based on selectedLayer
+    let additionalLayer = null;
+    if (selectedLayer === 'desa') {
+      additionalLayer = (
+        <Source
+          key="mvt-source-batas-desa"
+          id="mvt-source-batas-desa"
+          type="vector"
+          tiles={['http://localhost:8080/mvt/Batas_desa/{z}/{x}/{y}']}
+        >
+          <Layer
+            id="mvt-layer-batas-desa"
+            source="mvt-source-batas-desa"
+            source-layer="Batas_desa"
+            type="fill"
+            paint={{
+              'fill-color': 'rgba(0, 0, 255, 0.5)',
+              'fill-outline-color': 'red',
+            }}
+          />
+        </Source>
+      );
+    } else if (selectedLayer === 'kecamatan') {
+      additionalLayer = (
+        <Source
+          key="mvt-source-batas-kecamatan"
+          id="mvt-source-batas-kecamatan"
+          type="vector"
+          tiles={['http://localhost:8080/mvt/Batas_kecamatan/{z}/{x}/{y}']}
+        >
+          <Layer
+            id="mvt-layer-batas-kecamatan"
+            source="mvt-source-batas-kecamatan"
+            source-layer="Batas_kecamatan"
+            type="fill"
+            paint={{
+              'fill-color': 'rgba(0, 255, 0, 0.5)',
+              'fill-outline-color': 'red',
+            }}
+          />
+        </Source>
+      );
+    }
+
+    return [...layers, ...uploadedLayers, additionalLayer];
+  }, [layersData, files, selectedLayer]);
 
   useEffect(() => {
     handleZoomToCoordinate();
   }, [coordinate, handleZoomToCoordinate]);
+
+  // Update interactiveLayerIds based on selectedLayer
+  const interactiveLayerIds = useMemo(() => {
+    const ids = [
+      ...(layersData?.map((layer) => `layer-${layer?.layer?.id}`) || []),
+      ...(files?.map((file) => `layer-${file.name}`) || []),
+    ];
+
+    if (selectedLayer === 'desa') {
+      ids.push('mvt-layer-batas-desa');
+    } else if (selectedLayer === 'kecamatan') {
+      ids.push('mvt-layer-batas-kecamatan');
+    }
+
+    return ids;
+  }, [layersData, files, selectedLayer]);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
@@ -210,10 +272,7 @@ const MapComponent = () => {
         style={{ width: '100%', height: '100%' }}
         mapStyle={baseMap}
         onClick={handleLayerClick}
-        interactiveLayerIds={[
-          ...(layersData?.map((layer) => `layer-${layer?.layer?.id}`) || []),
-          ...(files?.map((file) => `layer-${file.name}`) || []),
-        ]}
+        interactiveLayerIds={interactiveLayerIds}
       >
         {memoizedLayers}
       </Map>
