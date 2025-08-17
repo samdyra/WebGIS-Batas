@@ -198,7 +198,7 @@ const MapComponent = () => {
         key={sourceId}
         id={sourceId}
         type="vector"
-        tiles={[`http://localhost:8080/mvt/${sourceLayer}/{z}/{x}/{y}`]}
+        tiles={[`http://85.209.163.226:20280/mvt/${sourceLayer}/{z}/{x}/{y}`]}
       >
         {/* Fill Layer */}
         <Layer

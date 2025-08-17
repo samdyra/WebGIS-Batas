@@ -271,7 +271,7 @@ Retrieve layers.
             "id": "cities",
             "source": {
                 "type": "vector",
-                "tiles": "http://localhost:8080/mvt/cities/{z}/{x}/{y}"
+                "tiles": "http://85.209.163.226:20280/mvt/cities/{z}/{x}/{y}"
             },
             "source-layer": "cities",
             "type": "circle",
@@ -289,7 +289,7 @@ Retrieve layers.
             "id": "rivers",
             "source": {
                 "type": "vector",
-                "tiles": "http://localhost:8080/mvt/rivers/{z}/{x}/{y}"
+                "tiles": "http://85.209.163.226:20280/mvt/rivers/{z}/{x}/{y}"
             },
             "source-layer": "rivers",
             "type": "line",
