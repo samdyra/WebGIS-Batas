@@ -3,7 +3,7 @@ import useAuthStore from '../../auth/hooks/useAuthStore';
 
 // Create an Axios instance
 const instance = axios.create({
-  baseURL: 'http://103.6.53.254:20250',
+  baseURL: 'http://localhost:8080',
   timeout: 1000 * 60 * 5,
 });
 
